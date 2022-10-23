@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>3.2.3 브라우저에서 자바스크립트 실행</title>
+  </head>
+
+  <body>
+    <div id="counter">0</div>
+
+    <button id="decrease">-</button>
+    <button id="increase">+</button>
+
+    <script>
+      // @ts-check
+
+      /** @type {{ [key: string]: HTMLElement | null }} */
+      const $elements = {
+        counter: null,
+        increase: null,
+        decrease: null,
+      };
+
+      const state = {
+        num: 0,
+      };
+
+      initElements();
+
+      /** 
+       * @param { string } selector 
+       * @returns { HTMLButtonElement }
+       */
+      function getElement(selector) {
+        /** @type { HTMLButtonElement } */
+        const $el = document.querySelector(`#${selector}`);
+
+        if (!$el) {
+          throw new Error(`${selector} 요소를 찾을 수 없습니다.`);
+        }
+
+        return $el;
+      };
+
+      function initElements() {
+        Object
+          .keys($elements)
+          .forEach(selector => {
+            $elements[`${selector}`] = getElement(selector)
+          });
+
+        console.log(`$elements: `, $elements);
+        
+        initOnClickEvent($elements.increase, state => state.num++);
+        initOnClickEvent($elements.decrease, state => state.num--);
+      };
+
+      /**
+       * @param { HTMLElement } $el
+       * @param { (state: { num: number }) => void } prefixCallback
+       */
+      function initOnClickEvent($el, prefixCallback) {
+        $el.onclick = () => {
+          prefixCallback(state);
+
+          console.log(`${$el.id} 버튼 클릭`, state.num);
+
+          render();
+        };
+      };
+
+      function render() {
+        $elements.counter.innerHTML = `${state.num}`;
+      };
+    </script>
+  </body>
+</html>
