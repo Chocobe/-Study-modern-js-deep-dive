@@ -28,7 +28,27 @@
         num: 0,
       };
 
+      const prefixCallbackMapper = {
+        increase: () => state.num++,
+        decrease: () => state.num--,
+      };
+
       initElements();
+
+      function initElements() {
+        Object
+          .keys($elements)
+          .map(selector => {
+            const $el = getElement(`#${selector}`);
+            $elements[`${selector}`] = $el;
+
+            return { selector, $el };
+          })
+          .filter(({ $el }) => $el.tagName.toLowerCase() === "button")
+          .forEach(({ $el, selector }) => {
+            initOnClickEvent($el, prefixCallbackMapper[selector])
+          });
+      };
 
       /** 
        * @param { string } selector 
@@ -36,7 +56,7 @@
        */
       function getElement(selector) {
         /** @type { HTMLButtonElement } */
-        const $el = document.querySelector(`#${selector}`);
+        const $el = document.querySelector(selector);
 
         if (!$el) {
           throw new Error(`${selector} 요소를 찾을 수 없습니다.`);
@@ -45,35 +65,22 @@
         return $el;
       };
 
-      function initElements() {
-        Object
-          .keys($elements)
-          .forEach(selector => {
-            $elements[`${selector}`] = getElement(selector)
-          });
-
-        console.log(`$elements: `, $elements);
-        
-        initOnClickEvent($elements.increase, state => state.num++);
-        initOnClickEvent($elements.decrease, state => state.num--);
-      };
-
       /**
        * @param { HTMLElement } $el
-       * @param { (state: { num: number }) => void } prefixCallback
+       * @param { () => void } prefixCallback
        */
       function initOnClickEvent($el, prefixCallback) {
         $el.onclick = () => {
-          prefixCallback(state);
+          prefixCallback();
 
           console.log(`${$el.id} 버튼 클릭`, state.num);
-
-          render();
+          render($elements.counter);
         };
       };
 
-      function render() {
-        $elements.counter.innerHTML = `${state.num}`;
+      /** @param { HTMLElement } $el */
+      function render($el) {
+        $el.innerHTML = `${state.num}`;
       };
     </script>
   </body>
