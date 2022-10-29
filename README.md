@@ -27,3 +27,5 @@
 * [4장. 변수](https://github.com/Chocobe/-Study-modern-javascript-deep-dive/tree/master/04%EC%9E%A5-%EB%B3%80%EC%88%98)
 
 * [5장. 표현식과 문](https://github.com/Chocobe/-Study-modern-javascript-deep-dive/tree/master/05%EC%9E%A5-%ED%91%9C%ED%98%84%EC%8B%9D%EA%B3%BC%20%EB%AC%B8)
+
+* [6장. 데이터 타입](https://github.com/Chocobe/-Study-modern-javascript-deep-dive/tree/master/06%EC%9E%A5-%EB%8D%B0%EC%9D%B4%ED%84%B0%20%ED%83%80%EC%9E%85)
