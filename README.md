@@ -2,7 +2,7 @@
 
 * 저자: 이웅모 님
 * 스터디 기간: `2022. 10. 05` ~
-* 스터디 그룹 참여
+* 스터디 목표: 하루 1장 이상 정리
 * 기대값
     * Javascript 개념 정리
     * Code Reading 능력 향상
@@ -31,3 +31,5 @@
 * [6장. 데이터 타입](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/06%EC%9E%A5-%EB%8D%B0%EC%9D%B4%ED%84%B0%20%ED%83%80%EC%9E%85)
 
 * [7장. 연산자](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/07%EC%9E%A5_%EC%97%B0%EC%82%B0%EC%9E%90)
+
+* [8장. 제어문](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/08%EC%9E%A5-%EC%A0%9C%EC%96%B4%EB%AC%B8)
