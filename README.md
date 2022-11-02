@@ -33,3 +33,5 @@
 * [7장. 연산자](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/07%EC%9E%A5_%EC%97%B0%EC%82%B0%EC%9E%90)
 
 * [8장. 제어문](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/08%EC%9E%A5-%EC%A0%9C%EC%96%B4%EB%AC%B8)
+
+* [9장. 타입 변환과 단축 평가](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/09%EC%9E%A5%20%ED%83%80%EC%9E%85%20%EB%B3%80%ED%99%98%EA%B3%BC%20%EB%8B%A8%EC%B6%95%20%ED%8F%89%EA%B0%80)
