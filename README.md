@@ -35,3 +35,5 @@
 * [8장. 제어문](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/08%EC%9E%A5-%EC%A0%9C%EC%96%B4%EB%AC%B8)
 
 * [9장. 타입 변환과 단축 평가](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/09%EC%9E%A5%20%ED%83%80%EC%9E%85%20%EB%B3%80%ED%99%98%EA%B3%BC%20%EB%8B%A8%EC%B6%95%20%ED%8F%89%EA%B0%80)
+
+* [10장. 객체 리터럴](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/10%EC%9E%A5%20%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4)
