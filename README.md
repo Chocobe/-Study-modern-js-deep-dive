@@ -44,3 +44,5 @@
 
 * [13장. 스코프](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/13%EC%9E%A5-%EC%8A%A4%EC%BD%94%ED%94%84)
 
+* [14장. 전역 변수의 문제점](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/14%EC%9E%A5-%EC%A0%84%EC%97%AD%20%EB%B3%80%EC%88%98%EC%9D%98%20%EB%AC%B8%EC%A0%9C%EC%A0%90)
+
