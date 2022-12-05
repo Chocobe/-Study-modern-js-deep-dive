@@ -42,3 +42,5 @@
 
 * [12장. 함수](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/12%EC%9E%A5-%ED%95%A8%EC%88%98)
 
+* [13장. 스코프](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/13%EC%9E%A5-%EC%8A%A4%EC%BD%94%ED%94%84)
+
