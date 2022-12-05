@@ -38,6 +38,8 @@
 
 * [10장. 객체 리터럴](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/10%EC%9E%A5-%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4)
 
+<br />
+
 * [11장. 원시 값과 객체의 비교](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/11%EC%9E%A5-%EC%9B%90%EC%8B%9C%20%EA%B0%92%EA%B3%BC%20%EA%B0%9D%EC%B2%B4%EC%9D%98%20%EB%B9%84%EA%B5%90)
 
 * [12장. 함수](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/12%EC%9E%A5-%ED%95%A8%EC%88%98)
@@ -45,4 +47,6 @@
 * [13장. 스코프](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/13%EC%9E%A5-%EC%8A%A4%EC%BD%94%ED%94%84)
 
 * [14장. 전역 변수의 문제점](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/14%EC%9E%A5-%EC%A0%84%EC%97%AD%20%EB%B3%80%EC%88%98%EC%9D%98%20%EB%AC%B8%EC%A0%9C%EC%A0%90)
+
+* [15장. let, const 키워드와 블록 레벨 스코프](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/15%EC%9E%A5-let_const_%ED%82%A4%EC%9B%8C%EB%93%9C%EC%99%80_%EB%B8%94%EB%A1%9D_%EB%A0%88%EB%B2%A8_%EC%8A%A4%EC%BD%94%ED%94%84)
 
