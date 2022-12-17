@@ -50,3 +50,5 @@
 
 * [16장. 프로퍼티 어트리뷰트](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/16%EC%9E%A5-%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0_%EC%96%B4%ED%8A%B8%EB%A6%AC%EB%B7%B0%ED%8A%B8)
 
+* [17장. 생성자 함수에 의한 객체 생성](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/17%EC%9E%A5-%EC%83%9D%EC%84%B1%EC%9E%90%20%ED%95%A8%EC%88%98%EC%97%90%20%EC%9D%98%ED%95%9C%20%EA%B0%9D%EC%B2%B4%20%EC%83%9D%EC%84%B1)
+
