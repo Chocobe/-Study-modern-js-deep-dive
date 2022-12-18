@@ -164,4 +164,129 @@ prototype 은 객체 간 상속을 구현하기 위해 사용합니다.
 
 
 
-## 3-2. 
+## 3-2. 함수 객체의 prototype 프로퍼티
+
+`__proto__` 는 모든 객체가 가지는 `[[Prototype]]` 접근자 프로퍼티 였습니다.
+
+`prototype` 프로퍼티는 오직 `생성자 함수` 만 가지는 접근자 프로퍼티 입니다.
+
+`생성자 함수` 가 소유하는 `prototype` 프로퍼티에는, 생성자 함수가 `생성할 인스턴스의 프로토타입` 을 가리킵니다.
+
+그러므로, `일반 객체`나 `non-constructor 함수` 에는 `prototype` 프로퍼티가 존재하지 않습니다.
+
+<br />
+
+즉, 다음과 같은 관계가 됩니다.
+* `(생성자 함수).prototype === (new 생성자함수()).__proto__`
+
+<br />
+
+```javascript
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+console.log(Person.hasOwnProperty('prototype')); // true
+
+const person = new Person('Chocobe', 36);
+console.log(person.hasOwnProperty('prototype')); // false
+
+console.log(Person.prototype === person.__proto__); // true
+```
+
+
+
+<br /><hr /><br/>
+
+
+
+## 3-3. 프로토타입의 constructor 프로퍼티와 생성자 함수
+
+모든 생성자 함수의 `prototype` 에는 `constructor` 프로퍼티가 있습니다.
+
+`constructor` 프로퍼티에는 `생성자 함수` 를 가리키며, 생성한 `인스턴스` 의 `__proto__` 에 `constructor` 로 연결됩니다.
+
+<br />
+
+```javascript
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const me = new Person('Chocobe', 36);
+console.log(Person === me.__proto__.constructor); // true
+```
+
+<br />
+
+위 코드처럼 `__proto__.constructor` 를 통해, 인스턴스를 생성한 `생성자 함수` 를 참조할 수 있습니다.
+
+그리고 `__proto__.constructor` 는 `인스턴스.constructor` 로 축약하여 접근할 수도 있습니다.
+
+즉, `__proto__` 를 생략하고 `constructor` 에 바로 접근할 수도 있습니다.
+
+```javascript
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+const me = new Person('Chocobe', 36);
+
+console.log(me.__proto__.constructor === Person); // true
+console.log(me.constructor === Person); // true
+console.log(me.__proto__.constructor === me.constructor); // true
+```
+
+
+
+# 4. 리터럴 표기법에 의해 생성된 객체의 생성자 함수와 프로토타입
+
+객체(인스턴스) 를 만들기 위한 방법은 2가지가 있습니다.
+
+* `객체 리터럴` 로 생성
+* `생성자 함수` 로 생성
+
+<br />
+
+```javascript
+const obj1 = new Object();
+
+const obj2 = {};
+```
+
+<br />
+
+이렇게 생성한 객체(인스턴스) 는 서로 다른 방법으로 생성하였지만, 생성 결과는 동일하게 보아도 무방 합니다.
+
+이는 자바스크립트 내부 동작에서 차이는 있지만, 결과적으로 `객체(인스턴스).constructor` 가 동일하게 바인딩 되기 때문입니다.
+
+<br />
+
+아래 코드를 통해 객체 리터럴로 생성한 constructor 와 생성자 함수로 생성한 constructor 가 동일함을 알 수 있습니다.
+
+<br />
+
+```javascript
+const obj1 = new Object();
+const obj2 = {};
+console.log(obj1.constructor === obj2.constructor); // true
+
+const func1 = new Function('lhs', 'rhs', 'return lhs + rhs');
+const func2 = function(lhs, rhs) {
+  return lhs + rhs;
+};
+console.log(func1.constructor === func2.constructor); // true
+
+const arr1 = new Array();
+const arr2 = [];
+console.log(arr1.constructor === arr2.constructor); // true
+
+const regExp1 = new RegExp('[a-z]');
+const regExp2 = /[a-z]/;
+console.log(regExp1.constructor === regExp2.constructor); // true
+```
+
+
+
