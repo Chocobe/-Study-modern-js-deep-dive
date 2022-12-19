@@ -425,7 +425,7 @@ console.log('Object.prototype === [].__proto__.__proto__: ', Object.prototype ==
 
 * `[[Prototype]]`: 객체(인스턴스) 를 생성한 `생성자 함수` 정보
   * 간접 접근 방법: `인스턴스.__proto__`
-* `[[Constructor]]`: 객체(인스턴스) 를 생성한 `생성자 함수`
+* `[[Construct]]`: 객체(인스턴스) 를 생성한 `생성자 함수`
   * 간접 접근 방법: `인스턴스.__proto__.constructor`
 * 모든 생성자 함수의 `prototype.__proto__` 는 `Object.prototype` 을 상속 받음
 * 모든 생성자 함수의 `prototype.__proto__.constructor` 는 `Object`
@@ -536,3 +536,174 @@ console.log('kim.sayGreeting === chocobe.sayGreeting: ', kim.sayGreeting === cho
 위 코드의 마지막부분을 보면 `kim.sayGreeting` 과 `chocobe.sayGreeting` 이 `동일한 메서드` 임을 알 수 있습니다.
 
 즉, `sayGreeting` 메서드는 `Person` 생성자 함수의 `prototype` 에 딱 한번 정의된 것이므로, 객체(인스턴스) 의 개수와 무관하게 `오직 1개` 만 존재하게 됩니다.
+
+
+
+<br /><hr /><br />
+
+
+
+# 7. 프로토타입 체인
+
+객체는 `[[Prototype]]` 내부 슬롯을 통해서 `상속` 을 받을 수 있습니다.
+
+아래 코드의 `Person` 생성자 함수에는 `hasOwnProperty()` 메서드를 정의하지 않았지만, `Object` 로 부터 상속받았기 때문에 정상적으로 사용할 수 있습니다.
+
+```javascript
+function Person(name) {
+  this.name = name;
+}
+
+const me = new Person('Chocobe');
+console.log(me.hasOwnProperty('name')); // true
+```
+
+<br />
+
+자바스크립트는 객체의 프로퍼티를 찾을 때, 다음과 같은 순서로 동작합니다.
+
+1. 객체 내부에서 프로퍼티를 찾습니다.
+2. 없다면, `객체.__proto__ (프로토타입)` 에서 프로퍼티를 찾습니다.
+3. 여기에도 없다면, `객체.__proto__.__proto__` 에서 프로퍼티를 찾습니다.
+  * `객체.__proto__.__proto__ === Object.prototype`
+
+<br />
+
+위 과정처럼 객체의 프로퍼티를 찾기위해 `프로토타입` 을 순차적으로 거슬러 올라가 프로퍼티를 검색하는 방식을 `프로토타입 체인` 이라고 합니다.
+
+`me.hasOwnProperty()` 메서드가 정의된 곳은 `Object` 입니다.
+
+`Object` 는 모든 객체의 최상위 부모이며, `프로토타입 체인의 종점 (End of Prototype Chain)` 이라고 합니다.
+
+<br />
+
+자바스크립트의 `프로토타입 체인 (Prototype Chain)` 은 객체의 `상속` 과 `프로퍼티 검색` 을 위한 메커니즘 입니다.
+
+<br />
+
+그리고 `프로토타입 체인 (Prototype Chain)` 과 협력 관계인 `스코프 체인 (Scope Chain)` 이 있는데, `스코프 체인 (Scope Chain)` 은 객체, 변수, 함수 와 같은 `식별자 검색` 을 위한 메커니즘 입니다.
+
+정리하면 다음과 같습니다.
+
+`스코프 체인 (Scope Chain)` 에서 `식별자 검색` 을 통해서 식별자를 찾고, 식별자의 프로퍼티에 접근한다면 `프로토타입 체인 (Prototype Chain)` 을 통해서 `프로퍼티 검색` 을 합니다.
+
+
+
+<br /><hr /><br />
+
+
+
+# 8. 오버라이딩과 프로퍼티 섀도잉
+
+객체를 통해 접근할 수 있는 프로퍼티는 자신의 프로퍼티와 `상속` 받은 `프로토타입` 에 있는 프로퍼티 입니다.
+
+이 프로퍼티를 구분하면 다음과 같습니다.
+
+* 인스턴스가 소유한 프로퍼티: `인스턴스 프로퍼티`
+* 프로퍼티가 소유한 프로퍼티: `프로토타입 프로퍼티`
+
+<br />
+
+`프로토타입 프로퍼티` 와 동일한 이름으로 `인스턴스 프로퍼티` 를 추가할 수 있습니다.
+
+이렇게 추가한 프로퍼티에 접근하면, 이전에 살펴본 `프로토타입 체인 (Prototype Chain)` 메커니즘으로 프로퍼티를 검색 합니다.
+
+가장 먼저 검색하는 위치는 `인스턴스` 이며, 여기서 찾고자 하는 프로퍼티를 찾게 됩니다.
+
+이렇게 찾은 프로퍼티는 `프로토타입 프로퍼티` 에도 있지만, `인스턴스 프로퍼티` 에서 찾았으므로, `인스턴스 프로퍼티` 를 참조하게 됩니다.
+
+결과적으로 `프로토타입 프로퍼티` 는 `인스턴스 프로퍼티` 에 의해 `가려지는 현상` 이 나타나며, `오버라이딩 (Overriding)` 이 됩니다.
+
+<br />
+
+이렇게 `인스턴스 프로퍼티` 로 `오버라이딩 (Overring)` 이 되는 현상을 `프로퍼티 섀도잉 (Property Shadowing)` 이라고 합니다.
+
+주의할 점으로 `프로퍼티 섀도잉 (Property Shadowing)` 은 `프로토타입 프로퍼티` 를 덮어 씌우는 것이 아닌, 단지 `프로토타입 프로퍼티` 이름과 동일한 `인스턴스 프로퍼티` 가 추가된 것입니다.
+
+<br />
+
+```javascript
+const User = (function() {
+  function User(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  User.prototype.sayGreeting = function() {
+    console.log(`Hello, I'm ${this.name} and ${this.age}`);
+  };
+
+  return User;
+}());
+
+const chocobe = new User('Chocobe', 36);
+// 프로토타입 프로퍼티의 sayGreeting() 이 호출됩니다.
+// "Hello, I'm Chocobe and 36"
+chocobe.sayGreeting();
+
+chocobe.sayGreeting = function() {
+  console.log(`*** Hello, I'm ${this.name} and ${this.age} ***`);
+};
+// 인스턴스 프로퍼티의 sayGreeting() 이 호출됩니다.
+// "*** Hello, I'm Chocobe and 36 ***"
+chocobe.sayGreeting();
+```
+
+<br />
+
+위 코드를 통해 `인스턴스` 를 통해서 `프로토타입 체인 (Prototype Chain)` 메커니즘으로 `프로퍼티 검색` 을 확인할 수 있었습니다.
+
+그리고 `프로토타입 프로퍼티` 와 동일한 이름으로 `인스턴스 프로퍼티` 를 추가하면 `프로퍼티 섀도잉 (Property Shadowing)` 이 되었습니다.
+
+만약 프로퍼티를 `변경` 또는 `삭제` 한다면, `인스턴스` 에서는 오직 `인스턴스 프로퍼티` 만 가능 합니다.
+
+`프로토타입 프로퍼티` 를 `변경` 또는 `삭제` 하고자 한다면, `생성자 함수.prototype` 으로 직접 접근하여야 합니다.
+
+<br />
+
+```javascript
+const User = (function() {
+  function User(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  User.sayGreeting = function() {
+    console.log(`Hello, I'm ${this.name} and ${this.age}`);
+  };
+
+  return User;
+}());
+
+const chocobe = new User('Chocobe', 36);
+chocobe.sayGreeting = function() {
+  console.log(`*** Hello, I'm ${this.name} and ${this.age}`);
+};
+
+// 인스턴스 프로퍼티의 sayGreeting() 이 호출됩니다.
+// "*** Hello, I'm Chocobe and 36 ***"
+chocobe.sayGreeting();
+
+// 인스턴스 프로퍼티인 sayGreeting 프로퍼티를 삭제 합니다.
+delete chocobe.sayGreeting;
+
+// 프로토타입 프로퍼티의 sayGreeting() 이 호출됩니다.
+// "Hello, I'm Chocobe and 36"
+chocobe.sayGreeting();
+
+// 인스턴스를 통해서 프로토타입 프로퍼티는 변경 or 삭제 할 수 없습니다.
+// Error 발생
+delete chocobe.sayGreeting;
+
+// 프로토타입 프로퍼티를 삭제하려면 해당 생성자함수의 prototype 에 직접 접근해야 합니다.
+delete User.prototype.sayGreeting;
+
+console.log(chocobe.sayGreeting); // undefined
+```
+
+
+
+<br /><hr /><br />
+
+
+
