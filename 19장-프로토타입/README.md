@@ -707,3 +707,166 @@ console.log(chocobe.sayGreeting); // undefined
 
 
 
+# 9. 프로토타입의 교체
+
+객체의 프로토타입은 동적으로 변경할 수 있습니다.
+
+이는 객체의 `상속` 을 `동적으로 변경` 할 수 있다는 의미를 가집니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 9-1. 생성자 함수에 의한 프로토타입 교체
+
+아래 코드에서 `Person` 생성자 함수는 `prototype` 이 `객체 리터럴` 로 교체 됩니다.
+
+```javascript
+const Person = (function() {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  Person.prototype = {
+    sayGreeting() {
+      console.log(`Hello, I'm ${this.name} and ${this.age}`);
+    },
+  };
+
+  return Person;
+}());
+
+const chocobe = new Person('Chocobe', 36);
+
+// "Hello, I'm Chocobe and 36"
+chocobe.sayGreeting();
+
+// [Function: Object]
+console.log('chocobe.constructor: ', chocobe.constructor);
+```
+
+<br />
+
+`Person` 생성자 함수의 `prototype` 을 교체한 결과, `Person` 인스턴스의 `constructor` 는 `Object` 가 되었습니다.
+
+교체한 `prototype` 은 `객체 리터럴` 이기 때문에, `constructor` 가 `Person` 이 아닌 `Object` 로 변경된 현상 입니다.
+
+만약 `prototype` 을 변경하면서 기존의 `constructor` 를 그대로 유지하고 싶다면, `constructor` 를 직접 지정해 주면 됩니다.
+
+<br />
+
+```javascript
+const Client = (function() {
+  function Client(name, email) {
+    this.name = name;
+    this.email = email;
+  }
+
+  Client.prototype = {
+    constructor: Client,
+    sayHello() {
+      console.log(`안녕하세요, 저는 ${this.name} 이고 Email은 ${this.email} 입니다.`);
+    },
+  };
+
+  return Client;
+}());
+
+const kim = new Client('Kim', 'kyw05171@gmail.com');
+
+// "안녕하세요, 저는 Kim 이고 Email 은 kyw05171@gmail.com 입니다."
+kim.sayHello();
+
+// "kim.constructor: [Function: Client]"
+console.log(`kim.constructor: ${kim.constructor}`);
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 9-2. 인스턴스에 의한 프로토타입의 교체
+
+객체의 프로토타입은 `객체.__proto__` 또는 `Object.getPrototypeOf(객체)` 를 통해서 얻을 수 있습니다.
+
+그리고 객체의 프로토타입을 임의로 교체할 수도 있습니다.
+
+* `객체.__proto__ = { /* new prototype */ }`
+* `Object.setPrototypeOf(객체, { /* new prototype */ })`
+
+<br />
+
+```javascript
+const Person = (function() {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  return Person;
+}());
+
+const chocobe = new Person('Chocobe', 36);
+
+Object.setPrototypeOf(chocobe, {
+  sayGreeting() {
+    console.log(`Hello, I'm ${this.name} and ${this.age}`);
+  },
+});
+
+// "Hello, I'm Chocobe and 36"
+chocobe.sayGreeting();
+
+// "chocobe.constructor: [Function: Object]"
+console.log('chocobe.constructor: ', chocobe.constructor);
+```
+
+<br />
+
+인스턴스의 `프로토타입 교체` 역시 `constructor` 를 명시하지 않았다면, `Object` 를 생성자 함수로 갖게 됩니다.
+
+아래의 코드는 변질된 `constructor` 를 원래의 생성자 함수로 명시해 줍니다.
+
+```javascript
+const Person = (function() {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  return Person;
+}());
+
+const kim = new Person('Kim', 20);
+
+Object.setPrototype(kim, {
+  constructor: Person,
+  sayHello() {
+    console.log(`Hello, I'm ${this.name} and ${this.age}`);
+  },
+});
+
+// "Hello, I'm Kim and 20"
+kim.sayHello();
+
+// "kim.constructor: [Function: Person]"
+console.log('kim.constructor: ', kim.constructor);
+```
+
+<br />
+
+인스턴스의 `프로토타입` 도 새로운 객체로 교체할 수 있었습니다.
+
+하지만 이렇게 인스턴스의 `프로토타입` 을 교체하는 것은 구현의 번거로움과 코드 복잡성을 올리기 때문에, 가급적 사용하지 않는 것을 권장 합니다.
+
+
+
+<br /><hr /><br />
+
+
+
