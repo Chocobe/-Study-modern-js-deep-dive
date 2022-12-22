@@ -241,6 +241,10 @@ console.log(me.__proto__.constructor === me.constructor); // true
 
 
 
+<br /><hr /><br />
+
+
+
 # 4. 리터럴 표기법에 의해 생성된 객체의 생성자 함수와 프로토타입
 
 객체(인스턴스) 를 만들기 위한 방법은 2가지가 있습니다.
@@ -287,6 +291,10 @@ const regExp1 = new RegExp('[a-z]');
 const regExp2 = /[a-z]/;
 console.log(regExp1.constructor === regExp2.constructor); // true
 ```
+
+
+
+<br /><hr /><br />
 
 
 
@@ -870,3 +878,588 @@ console.log('kim.constructor: ', kim.constructor);
 
 
 
+# 10. instanceof 연산자
+
+`instanceof` 연산자는 `prototype` 을 검사하는 이항 연산자 입니다.
+
+`instanceof` 를 기준으로 좌변에는 `객체`, 우변에는 `생성자 함수` 를 위치 시킵니다.
+
+우변에 위치한 생성자 함수의 `prototype` 이 좌변 객체의 `__proto__` 와 동일한지를 `프로토타입 체이닝 (Prototype Chaining)` 으로 대조하며, 동일한 경우가 있다면 `true` 를 반환 합니다.
+
+<br />
+
+```javascript
+const Person = (function() {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  return Person;
+}());
+
+const chocobe = new Person('Chocobe', 36);
+
+// "chocobe instanceof Person: true"
+console.log('chocobe instanceof Person: ', chocobe instanceof Person);
+```
+
+<br />
+
+주의할 점은 `instanceof` 연산자의 기능이 특정 객체의 `constructor` 를 검사하는 것이 아닌, `[[Prototype]]` 을 검사하는 부분 입니다.
+
+`instanceof` 연산자는 아래의 코드처럼 재귀 형식으로 `[[Prototype]]` 을 검사하도록 구현되어 있습니다.
+
+<br />
+
+```javascript
+const isInstanceof = (instance, constructor) => {
+  const prototype = Object.getPrototypeOf(instance);
+
+  if (prototype === null) return false;
+
+  return prototype === constructor.prototype ||
+    isInstanceof(prototype, constructor);
+};
+
+const Person = (function() {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  return Person;
+}());
+
+const chocobe = new Person('Chocobe', 36);
+
+// chocobe instanceof Person: true
+console.log('chocobe instanceof Person: ', chocobe instanceof Person);
+
+// "isInstanceof(chocobe, Person): true"
+console.log('isInstanceof(chocobe, Person): ', isInstanceof(chocobe, Person));
+
+// "isInstanceof(chocobe, Object): true"
+console.log('isInstanceof(chocobe, Object): ', isInstanceof(chocobe, Object));
+
+// "isInstanceof(chocobe, Array): false"
+console.log('isInstanceof(chocobe, Array): ', isInstanceof(chocobe, Array));
+```
+
+
+
+<br /><hr /><br />
+
+
+
+# 11. 직접 상속
+
+## 11-1. Object.create 에 의한 직접 상속
+
+`Object.create` 메서드는 객체를 생성하되, `prototype` 을 명시적으로 지정하여 생성하는 기능을 가집니다.
+
+객체를 생성하면서 적용할 `프로토타입` 을 직접 지정하므로, 직접 상속으로 객체를 생성하게 됩니다.
+
+<br />
+
+`Object.create` 메서드의 프로퍼티는 다음과 같습니다.
+
+* 첫번째 인자: 생성할 객체의 `프로토타입` 으로 지정할 객체
+* 두번째 인자: 생성할 객체의 `키: PropertyDescriptor객체` 로 구성된 객쳋
+
+<br />
+
+아래 코드는 `Object.create()` 를 사용하여 객체를 생성 합니다.
+
+```javascript
+// obj 의 프로토타입 체인 종점은 null 이 됩니다.
+let obj = Object.create(null);
+
+// "Object.getPrototypeOf(obj): null"
+console.log('Object.getPrototypeOf(obj): ', Object.getPrototypeOf(obj));
+
+
+
+// obj 의 프로토타입은 Object.prototype 이 됩니다.
+obj = Object.create(Object.prototype);
+
+// obj = {} 과 동일한 결과가 됩니다.
+console.log('Object.getPrototypeOf(obj) === Object.prototype: ', Object.getPrototypeOf(obj) === Object.prototype);
+
+
+
+// obj = { myValue: 3 } 과 동일한 결과가 됩니다.
+obj = Object.create(Object.prototype, {
+  myValue: {
+    value: 3,
+    writable: true,
+    enumerable: true,
+    configurable: true,
+  },
+});
+
+// "obj.myValue: 3"
+console.log('obj.myValue: ', obj.myValue);
+
+// "Object.getPrototypeOf(obj) === Object.prototype: true"
+console.log('Object.getPrototypeOf(obj) === Object.prototype: ', Object.getPrototypeOf(obj) === Object.prototype);
+
+
+
+// myObj 의 [[Prototype]] 은 myObj 가 됩니다.
+const myObj = {
+  someValue: 123,
+};
+obj = Object.create(myObj);
+
+// "obj.someValue: 123"
+console.log('obj.someValue: ', obj.someValue);
+
+// "Object.getPrototypeOf(obj) === myObj: true"
+console.log('Object.getPrototypeOf(obj) === myObj: ', Object.getPrototypeOf(obj) === myObj);
+
+
+
+// obj 의 [[Prototype]] 은 Person.prototype 이 됩니다.
+const Person = (function() {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  return Person;
+}());
+
+obj = Object.create(Person.prototype);
+obj.name = 'Chocobe';
+obj.age = 36;
+
+//"obj.name: Chocobe"
+console.log('obj.name: ', obj.name);
+
+// "Object.getPrototypeOf(obj) === Person.prototype: true"
+console.log('Object.getPrototypeOf(obj) === Person.prototype: ', Object.getPrototypeOf(obj) === Person.prototype);
+```
+
+<br />
+
+`ESLint` 에서는 `Object.prototype.빌트인_메서드` 를 특정 객체가 직접 호출하는 것을 권장하지 않습니다.
+
+이유는 `Object.create()` 처럼 객체의 `프로토타입` 에 `Object.prototype` 이 아닌 경우에는 에러를 발생시키기 때문 입니다.
+
+만약 `Object.prototype.빌트인_메서드` 를 사용할 경우에는 다음과 같이 `call()` 을 사용한 간접 호출을 권장 합니다.
+
+<br />
+
+```javascript
+const obj = Object.create(null);
+obj.myValue = 3;
+
+// "Object.prototype.hasOwnProperty.call(obj, 'myValue'): true"
+console.log('Object.prototype.hasOwnProperty.call(obj, "myValue"): ', Object.prototype.hasOwnProperty.call(obj, 'myValue'));
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 11-2. 객체 리터럴 내부에서 __proto__ 에 의한 직접 상속
+
+객체의 직접 상속을 하기 위해, `Object.create()` 를 살펴 보았습니다.
+
+`Object.create()` 으로 객체를 생성할 경우, 생성할 객체의 프로퍼티를 정의하는 부분에서 번거로움이 많습니다.
+
+* `Object.create()` 의 `두번째 인자` 로 넘겨주는 `PropertyDescriptor` 로 정의 방식
+
+<br />
+
+그래서 ES6 에 추가된 `객체 리터럴 내부의 __proto__ 프로퍼티` 를 통해 직접 상속을 사용하면, `Object.create()` 의 번거로움을 해소할 수 있습니다.
+
+<br />
+
+```javascript
+const Vector = (function() {
+  function Vector(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  return Vector;
+}());
+
+const myVector = new Vector(11, 22);
+
+const box = {
+  width: 300,
+  height: 400,
+
+  __proto__: myVector,
+};
+
+// "box.x: 11"
+console.log('box.x: ', box.x);
+
+// "box.y: 22"
+console.log('box.y: ', box.y);
+
+// "box.width: 300"
+console.log('box.width: ', box.width);
+
+// "box.height: 400"
+console.log('box.height: ', box.height);
+
+// "Object.getPrototypeOf(box) === myVector: true"
+console.log('Object.getPrototypeOf(box) === myVector: ', Object.getPrototypeOf(box) === myVector);
+
+// "box instanceof Vector: true"
+console.log('box instanceof Vector: ', box instanceof Vector);
+
+// "box instanceof Object: true"
+console.log('box instanceof Object: ', box instanceof Object);
+```
+
+
+
+<br /><hr /><br />
+
+
+
+# 12. 정적 프로퍼티/메서드
+
+상속을 구현할 때, 생성자 함수의 `prototype` 에 프로퍼티/메서드를 정의 하였습니다.
+
+이렇게 정의한 프로퍼티/메서드는 생성자 함수로 생성한 객체를 통해 접근할 수 있습니다.
+
+<br />
+
+만약 생성자 함수가 소유한 프로퍼티/메서드를 정의하게 되면, 생성자 함수를 통해서 직접 호출해서 사용하는 `정적 프로퍼티/메서드` 가 됩니다.
+
+`정적 프로퍼티/메서드` 는 생성자 함수가 소유하기 때문에, 생성자 함수가 생성한 객체를 통해서는 접근할 수 없다는 특징이 있습니다.
+
+<br />
+
+만약 생성자 함수의 `prototype` 에 정의한 메서드 내부에서 `this` 를 사용하지 않는다면, 이 메서드는 `정적 프로퍼티/메서드` 로 변경할 수 있습니다.
+
+<br />
+
+```javascript
+const Person = (function() {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+
+    // 인스턴스 메서드
+    this.sayHello = function() {
+      console.log(`Hello, I'm ${this.name} and ${this.age}`);
+    };
+  }
+
+  // 정적 메서드
+  Person.staticSayHello = function() {
+    console.log('[static] Hello!');
+  };
+
+  return Person;
+}());
+
+// "[static] Hello!"
+Person.staticSayHello();
+
+const chocobe = new Person('Chocobe', 36);
+
+// "Hello, I'm Chocobe and 36"
+chocobe.sayHello();
+```
+
+
+
+<br /><hr /><br />
+
+
+
+# 13. 프로퍼티 존재 확인
+
+## 13-1. in 연산자
+
+`in` 연산자는 객체 내에 특정 프로퍼티가 존재하는지 여부를 확인하는 연산자 입니다.
+
+주의할 점은 `프로토타입 채인 (Prototype Chain)` 전체를 검사하기 때문에, 객체가 상속받은 프로퍼티까지 검사 대상이 된다는 부분 입니다.
+
+<br />
+
+```javascript
+const Person = (function() {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  return Person;
+}());
+
+const chocobe = new Person('Chocobe', 36);
+
+// '"name" in chocobe: true'
+console.log('"name" in chocobe: ', 'name' in chocobe);
+
+// '"age" in chocobe: true'
+console.log('"age" in chocobe: ', 'age' in chocobe);
+
+// '"address" in chocobe: false'
+console.log('"address" in chocobe: ', 'address' in chocobe);
+
+// '"toString" in chocobe: true'
+console.log('"toString" in chocobe: ', 'toString' in chocobe);
+
+// "Reflect.has(chocobe, 'name'): true"
+console.log("Reflect.has(chocobe, 'name'): ", Reflect.has(chocobe, 'name'));
+
+// "Reflect.has(chocobe, 'age'): true"
+console.log('Reflect.has(chocobe, "age"): ', Reflect.has(chocobe, 'age'));
+
+// "Reflect.has(chocobe, 'address'): false"
+console.log('Reflect.has(chocobe, "address"): ', Reflect.has(chocobe, 'address'));
+
+// "Reflect.has(chocobe, 'toString'): true"
+console.log('Reflect.has(chocobe, "toString"): ', Reflect.has(chocobe, 'toString'));
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 13-2. Object.prototype.hasOwnProperty 메서드
+
+`Object.prototype.hasOwnProperty()` 메서드를 통해서도 프로퍼티가 존재하는지 확인할 수 있습니다.
+
+`in 연산자` 와는 다르게, 객체 고유의 프로퍼티일 경우에만 `true` 를 반환하고, 없는 프로퍼티거나 상속받은 프로퍼티일 경우에는 `false` 를 반환 합니다.
+
+<br />
+
+```javascript
+const Person = (function() {
+  function Person(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  return Person;
+}());
+
+const chocobe = new Person('Chocobe', 36);
+
+// "Object.prototype.hasOwnProperty.call(chocobe, 'name'): true"
+console.log('Object.prototype.hasOwnProperty.call(chocobe, "name"): ', Object.prototype.hasOwnProperty.call(chocobe, 'name'));
+
+// "Object.prototype.hasOwnProperty.call(chocobe, 'age'): true"
+console.log('Object.prototype.hasOwnProperty.call(chocobe, "age"): ', Object.prototype.hasOwnProperty.call(chocobe, 'age'));
+
+// "Object.prototype.hasOwnProperty.call(chocobe, 'toString'): false"
+console.log('Object.prototype.hasOwnProperty.call(chocobe, "toString"): ', Object.prototype.hasOwnProperty.call(chocobe, 'toString'));
+```
+
+
+
+<br /><hr /><br />
+
+
+
+# 14. 프로퍼티 열거
+
+## 14-1. for ... in 문
+
+`for ... in 문` 은 객체의 모든 프로퍼티를 순회하면서 `열거 (Enumeration)` 합니다.
+
+`in 연산자` 처럼 객체가 `상속받은 모든 프로퍼티를 포함` 하는 특징이 있습니다.
+
+즉, `프로토타입 체이닝 (Prototype Chaining)` 의 종점까지 모든 프로퍼티가 대상이 됩니다.
+
+<br />
+
+다만, `프로퍼티 어트리뷰트 (Property Attribute)` 중 `[[Enumerable]]: true` 인 프로퍼티만 열거 대상이 됩니다.
+
+예를 들어, `Object.prototype.toString` 메서드는 `[[Enumerable]]: false` 이기 때문에 `for ... in 문` 의 열거에는 제외됩니다.
+
+<br />
+
+```javascript
+// for ... in 문으로 순회 시, 프로토타입의 프로퍼티도 열거 대상이 됩니다.
+const chocobe = {
+  name: 'Chocobe',
+  age: 36,
+
+  __proto__: {
+    email: 'kyw05171@gmail.com',
+  },
+};
+
+for (const key in chocobe) {
+  console.log(`key: "${key}"`);
+}
+// "name"
+// "age"
+// "email"
+```
+
+<br />
+
+만약 객체 자체의 프로퍼티만 열거하고 싶다면, `Object.prototype.hasOwnProperty()` 메서드로 확인하여야 합니다.
+
+```javascript
+const chocobe = {
+  name: 'Chocobe',
+  age: 36,
+
+  __proto__: {
+    email: 'kyw05171@gmail.com',
+  },
+};
+
+for (const key in chocobe) {
+  if (Object.prototype.hasOwnProperty.call(chocobe, key)) {
+    console.log(`객체 자체의 프로퍼티 키: "${key}"`);
+  }
+}
+// "name"
+// "age"
+```
+
+<br />
+
+객체의 프로퍼티는 `프로퍼티 어트리뷰트` 를 가집니다.
+
+`프로퍼티 어트리뷰트` 중 `[[Enumerable]]: false` 인 프로퍼티는 `for ... in 문` 의 열거 대상에서 제외 됩니다.
+
+<br />
+
+```javascript
+const kim = {
+  name: 'Kim',
+  age: 36,
+
+  __proto__: Object.defineProperty({}, 'email', {
+    value: 'kyw05171@gmail.com',
+    writable: true,
+    enumerable: false,
+    configurable: true,
+  }),
+};
+
+for (const key in kim) {
+  console.log(`key: "${key}"`);
+}
+// "name"
+// "age"
+```
+
+<br />
+
+객체의 프로퍼티 키가 `Symbol` 인 경우도, 열거에서 제외 됩니다.
+
+<br />
+
+```javascript
+const symbolKey = Symbol();
+
+const lucidMoon = {
+  name: 'Lucid Moon',
+  age: 36,
+
+  [symbolKey]: 'value of Symbol key',
+};
+
+for (const key in lucidMoon) {
+  console.log(`key: "${key}"`);
+}
+// "name"
+// "age"
+```
+
+<br />
+
+지금까지 살펴본 `for ... in 문` 은 열거할 때, 프로퍼티의 순서는 보장하지 않습니다.
+
+그리고 `배열` 도 객체이므로 `for ... in 문` 으로 열거할 수 있지만, 사용을 권장하지는 않습니다.
+
+대신 `for 문` 이나 `for ... of 문` 을 권장 합니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 14-2. Object.keys/values/entities 메서드
+
+`for ... in 문` 으로 객체의 프로퍼티를 열거할 경우, 객체 자신의 고유한 프로퍼티만을 열거하기 위한 추가적인 처리가 필요 하였습니다.
+
+* `Object.prototype.hasOwnProperty()` 검사
+
+<br />
+
+만약 상속받은 프로퍼티가 아닌, 객체 자신의 고유한 프로퍼티만을 열거하고 싶다면, 아래의 메서드 사용을 권장 합니다.
+
+* `Object.keys(객체)`: 객체 자신의 고유 프로퍼티 이름을 열거
+* `Object.values(객체)`: 객체 자신의 고유 프로퍼티에 속하는 값을 열거
+* `Object.entries(객체)`: 객체 자신의 고유 프로퍼티에 속하는 `[키, 값]` 순서쌍을 열거
+
+<br />
+
+```javascript
+// Object.keys(객체)
+// : 객체 자신의 고유 프로퍼티 이름을 열거 합니다.
+
+const chocobe = {
+  name: 'Chocobe',
+  age: 36,
+
+  __proto__: {
+    email: 'kyw05171@gmail.com',
+  },
+};
+
+// "Object.keys(chocobe): ['name', 'age']"
+console.log('Object.keys(chocobe): ', Object.keys(chocobe));
+```
+
+<br />
+
+```javascript
+// Object.values(객체)
+// : 객체 자신의 고유 프로퍼티에 속하는 값을 열거 합니다.
+
+const kim = {
+  name: 'Kim',
+  age: 36,
+
+  __proto__: {
+    email: 'kyw05171@gmail.com',
+  },
+};
+
+// "Object.values(kim): ['Kim', 36]"
+console.log('Object.values(kim): ', Object.values(kim));
+```
+
+<br />
+
+```javascript
+// Object.entries(객체)
+// : 객체 자신의 고유 프로퍼티에 속하는 [키, 값] 순서쌍을 열거 합니다.
+
+const lucidMoon = {
+  name: 'Lucid Moon',
+  age: 36,
+  
+  __proto__: {
+    email: 'kyw05171@gmail.com',
+  },
+};
+
+// "Object.entries(lucidMoon): [['name', 'Lucid Moon'], ['age', 36]]"
+console.log('Object.entries(lucidMoon): ', Object.entries(lucidMoon));
+```
