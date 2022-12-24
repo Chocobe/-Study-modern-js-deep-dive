@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      function myGlobalFunction() {
+        return 'called myGlobalFunction()';
+      }
+
+      var myGlobalVar = 'value of myGlobalVar';
+
+      (function() {
+        implicitGlobal = 'value of implicitGlobal';
+
+        // "globalThis.myGlobalVar: value of myGlobalVar"
+        console.log('globalThis.myGlobalVar: ', globalThis.myGlobalVar);
+
+        // "globalThis.implicitGlobal: value of implicitGlobal"
+        console.log('globalThis.implicitGlobal: ', globalThis.implicitGlobal);
+
+        // "globalthis.myGlobalFunction(): called myGlobalFunction()"
+        console.log('globalThis.myGlobalFunction(): ', globalThis.myGlobalFunction());
+      }());
+    </script>
+  </body>
+</html>
