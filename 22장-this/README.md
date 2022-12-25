@@ -330,3 +330,249 @@ console.log('Person.prototype.getName(): ', Person.prototype.getName());
 
 
 
+## 2-3. 생성자 함수 호출
+
+`생성자 함수` 는 `객체 (인스턴스)` 를 생성하는 함수 입니다.
+
+`생성자 함수` 내부에서의 `this` 는 `생성자 함수` 가 생성할 `객체 (인스턴스)` 를 가리키게 됩니다.
+
+<br />
+
+```javascript
+const Rect = (function() {
+  function Rect(width, height) {
+    this.width = width;
+    this.height = height;
+    this.getArea = function() {
+      return this.width * this.height;
+    };
+  }
+
+  return Rect;
+}());
+
+const rect1 = new Rect(2, 3);
+const rect2 = new Rect(10, 20);
+
+// rect1.getArea(): 6
+console.log('rect1.getArea(): ', rect1.getArea());
+
+// rect2.getArea(): 200
+console.log('rect2.getArea(): ', rect2.getArea());
+```
+
+<br />
+
+`생성자 함수` 는 `일반 함수` 의 정의와 동일한 구조로 정의합니다.
+
+그래서 `생성자 함수` 의 `내부슬롯` 에는 `[[Construct]]` 와 `[[Caller]]` 가 함께 존재 합니다.
+
+`new` 키워드와 `생성자 함수` 를 함께 사용하면, `[[Construct]]` 를 사용하게 되고, 이는 `생성자 함수` 로 동작하게 됩니다.
+
+이 때의 `생성자 함수` 내부에서 접근하는 `this` 는 새로 생성할 `객체 (인스턴스)` 를 가리키게 됩니다.
+
+<br />
+
+만약 `new` 키워드를 사용하지 않고, 단독으로 `생성자 함수` 를 호출한다면 `[[Caller]]` 를 사용하게 되고, `일반 함수` 로 동작하게 됩니다.
+
+이 때의 `일반 함수` 내부의 `this` 는 `함수를 호출한 객체` 가 됩니다.
+
+<br />
+
+```javascript
+const Rect = (function() {
+  function Rect(width, height) {
+    this.width = width;
+    this.height = height;
+    this.getArea = function() {
+      return this.width * this.height;
+    };
+  }
+
+  return Rect;
+}());
+
+const rect3 = Rect(3, 4);
+
+// TypeError 발생
+console.log(rect3.getArea());
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 2-4. Function.prototype.apply/call/bind 메서드에 의한 간접 호출
+
+자바스크립트의 모든 함수는 `Function.prototype` 을 상속 받습니다.
+
+`Function.prototype` 에는 함수를 `간접 호출` 할 수 있는 메서드를 제공 합니다.
+
+* `Function.prototype.apply`
+* `Function.prototype.call`
+* `Function.prototype.bind`
+
+<br />
+
+위 3가지 메서드의 주요 기능은, 함수 내부에서 사용할 `this` 를 직접 바인딩할 수 있도록 합니다.
+
+`첫번째 인자` 로 `this 에 바인딩할 객체` 를 넘겨 줍니다.
+
+`this 에 바인딩할 객체` 는 함수가 호출되고 내부에서 `this` 에 접근할 때 사용됩니다.
+
+<br />
+
+`apply` 와 `call` 메서드는 `첫번째 인자` 로 넘겨받은 객체를 `this` 에 바인딩한 후 `실행` 시킵니다.
+
+두 메서드의 차이점은 `실제 함수에 넘겨줄 인자` 를 넘겨받는 형태 입니다.
+
+* `apply(thisArg, 배열 or 유사배열)`
+* `call(thisArg, ...인수)`
+
+<br />
+
+`apply` 와 `call` 이 `thisArg` 를 `this` 에 바인딩한 후, 실제 함수를 호출할 때, 나머지 인수들을 실제 함수에 인수로 넘겨줍니다.
+
+<br />
+
+```javascript
+(function() {
+  function getThisBinding() {
+    return this;
+  }
+  
+  const myThisArg = {
+    myValue: 333,
+  };
+  
+  // getThisBinding(): global
+  console.log('getThisBindidng(): ', getThisBinding());
+  
+  // getThisBinding.apply(myThisArg): { myValue: 333 }
+  console.log('getThisBInding.apply(myThisArg): ', getThisBinding.apply(myThisArg));
+  
+  // getThisBinding.call(myThisArg): { myValue: 333 }
+  console.log('getThisBinding.call(myThisArg): ', getThisBinding.call(myThisArg));
+}());
+```
+
+<br />
+
+`apply` 와 `call` 을 사용하여, 함수의 인수까지 전달해 보면 다음과 같습니다.
+
+<br />
+
+```javascript
+(function() {
+  function getThisBindingAndArguments() {
+    return [this, arguments];
+  }
+
+  const myThisArg = {
+    myValue: 'Hello World',
+  };
+
+  /**
+   * getThisBindingAndArguments.apply(myThisArg, 'firstParam', 'secondParam'): [
+   *  { myValue: 'Hello World' }, 
+   *  { 
+   *    '0': 'firstParam', 
+   *    '1': 'secondParam',
+   *  },
+   * ]
+   **/
+  console.log(
+    'getThisBindingAndArguments.apply(myThisArg, ["firstParam", "secondParam"]): ', 
+    getThisBindingAndArguments.apply(myThisArg, ['firstParam', 'secondParam'])
+  );
+
+  /**
+   * getThisBindingAndArguments.call(myThisArg, 'firstParam', 'secondParam'): [
+   *  { myValue: 'Hello World' }, 
+   *  { 
+   *    '0': 'firstParam', 
+   *    '1': 'secondParam',
+   *  },
+   * ]
+   **/
+  console.log(
+    'getThisBindingAndArguments.call(myThisArg, "firstParam", "secondParam"): ',
+    getThisBindingAndArguments.call(myThisArg, 'firstParam', 'secondParam')
+  );
+}());
+```
+
+<br />
+
+`bind` 메서드는 `thisArg` 를 `this` 에 바인딩 한 새로운 함수를 반환 합니다.
+
+`this` 바인딩이된 새로운 함수를 반환만 할 뿐, `apply` 와 `call` 과는 다르게 호출하지는 않습니다.
+
+<br />
+
+```javascript
+(function() {
+  function getThisBindingAndArguments() {
+    return [this, arguments];
+  }
+
+  const myThisArg = {
+    myValue: 'value of myValue',
+  };
+
+  // getThisBindingAndArguments: [Function: bound getThisBindingAndArguments]
+  console.log(
+    'getThisBindingAndArguments.bind(myThisArg, "firstParam", "secondParam"): ',
+    getThisBindingAndArguments.bind(myThisArg, 'firstParam', 'secondParam')
+  );
+
+  /**
+   * getThisBindingAndArguments.bind(myThisArg, 'firstParam', 'secondParam')(): [
+   *  { myValue: 'value of myValue' },
+   *  [
+   *    '0': 'firstParam',
+   *    '1': 'secondParam',
+   *  ],
+   * ]
+   **/
+  console.log(
+    'getThisBindingAndArguments.bind(myThisArg, "firstParam", "secondParam"): ',
+    getThisBindingAndArguments.bind(myThisArg, 'firstParam', 'secondParam')()
+  );
+}());
+```
+
+<br />
+
+`bind` 메서드가 유용한 경우는 `callback 함수` 와 `중첩 함수` 의 `this` 를 `일치` 시킬 때 입니다.
+
+* `callback 함수` 의 `this` 를 일치 시키기 위해, `화살표 함수` 를 `callback` 으로 넘겨주는 것이 코드를 더 깔끔하게 작성할 수 있습니다.
+
+<br />
+
+```javascript
+(function() {
+  const chocobe = {
+    name: 'Chocobe',
+    doSomethingAfterThrottling(callback) {
+      // 1. callback 함수의 this 를 bind() 로 지정
+      setTimeout(callback.bind(this), 1000);
+
+      // 2. 중첩함수의 this 를 bind() 로 지정
+      const innerFunction = (function() {
+        // innerFunction() - this.name: Chocobe
+        console.log(`innerFunction() - this.name: ${this.name}`);
+      }).bind(this);
+
+      innerFunction();
+    },
+  };
+
+  chocobe.doSomethingAfterThrottling(function() {
+    // Hello, Callback! I'm Chocobe
+    console.log(`Hello, Callback! I'm ${this.name}`);
+  });
+}());
+```
