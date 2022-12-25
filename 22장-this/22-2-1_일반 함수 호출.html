@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      // 1. 일반 함수 -> 함수 호출
+      function normalFunction() {
+        // normalFunction() - this: window
+        console.log('normalFunction() - this: ', this);
+      }
+      normalFunction();
+
+
+      console.log('');
+      
+      
+      var myValue = 111;
+
+      const myObj = {
+        myValue: 333,
+        myObjMethod() {
+          // (메서드 -> 메서드로 호출 - this: { myValue: 333, myObjMethod: f })
+          console.log('(메서드 -> 메서드로 호출 - this: ', this);
+          // this.myValue: 333
+          console.log('\tthis.myValue: ', this.myValue);
+
+          // 2. 중첩 함수 -> 함수 호출
+          function innerFunction() {
+            // innerFunction() - this: window
+            console.log('innerFunction() - this: ', this);
+            // this.myValue: 111
+            console.log('\tthis.myValue: ', this.myValue);
+          }
+          innerFunction();
+
+          // 3. (화살표 함수가 아닌) callback 함수 -> 함수 호출
+          setTimeout(function() {
+            // (화살표 함수가 아닌) callback() - this: window
+            console.log('(화살표 함수가 아닌) callback() - this: ', this);
+            // this.myValue: 111
+            console.log('\tthis.myValue: ', this.myValue);
+          }, 1000);
+        }
+      };
+      myObj.myObjMethod();
+
+      // 4. 객체의 method -> 함수로 호출
+      const yourObj = {
+        myValue: 777,
+        yourObjMethod() {
+          // (메서드 -> 메서드가 아닌 함수로 호출 - this: window)
+          console.log('(메서드 - 메서드가 아닌 함수로 호출 - this: ', this);
+          // this.myValue: 111
+          console.log('\tyourObjMethod() - this: ', this.myValue);
+        },
+      };
+      const yourObjMethodRef = yourObj.yourObjMethod;
+      yourObjMethodRef();
+
+      // 5. callback 함수를 `화살표 함수` 로 정의 -> 함수 호출 - this: someObj
+      const someObj = {
+        myValue: 1234,
+        someObjMethod() {
+          setTimeout(() => {
+            // (화살표 함수) callback() - this: { myValue: 1234, someObjMethod: f }
+            console.log('(화살표 함수) callback() - this: ', this);
+            // myValue: 1234
+            console.log('\tthis.myValue: ', this.myValue);
+          }, 2000);
+        },
+      };
+      someObj.someObjMethod();
+    </script>
+  </body>
+</html>
