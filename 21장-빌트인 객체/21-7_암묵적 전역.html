@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      var x = 10;
+
+      function myFunction() {
+        y = 20;
+
+        console.log('x + y: ', x + y);
+      }
+      myFunction();
+
+      // window.x: 10
+      console.log('window.x: ', window.x);
+
+      // window.y: 20
+      console.log('window.y: ', window.y);
+
+      // x 는 `전역 변수` 이므로 `delete` 연산자가 무시 됩니다.
+      delete window.x;
+      // window.x: 10
+      console.log('window.x: ', window.x);
+
+      // y 는 `암묵적 전역` 으로 생성된, `전역 프로퍼티` 이므로, `delete` 연산자로 `y` 프로퍼티를 삭제 합니다.
+      delete window.y;
+      // window.y: undefined
+      console.log('window.y: ', window.y);
+    </script>
+  </body>
+</html>

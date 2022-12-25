@@ -36,7 +36,11 @@
 
 * [10장. 객체 리터럴](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/10%EC%9E%A5-%EA%B0%9D%EC%B2%B4%20%EB%A6%AC%ED%84%B0%EB%9F%B4)
 
+
+
 <br />
+
+
 
 * [11장. 원시 값과 객체의 비교](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/11%EC%9E%A5-%EC%9B%90%EC%8B%9C%20%EA%B0%92%EA%B3%BC%20%EA%B0%9D%EC%B2%B4%EC%9D%98%20%EB%B9%84%EA%B5%90)
 
@@ -55,3 +59,13 @@
 * [18장. 함수와 일급 객체](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/18%EC%9E%A5-%ED%95%A8%EC%88%98%EC%99%80%20%EC%9D%BC%EA%B8%89%20%EA%B0%9D%EC%B2%B4)
 
 * [19장. 프로토타입](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/19%EC%9E%A5-%ED%94%84%EB%A1%9C%ED%86%A0%ED%83%80%EC%9E%85)
+
+* [20장. strict mode](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/20%EC%9E%A5-strict%20mode)
+
+
+
+<br />
+
+
+
+* [21장. 빌트인 객체](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/21%EC%9E%A5-%EB%B9%8C%ED%8A%B8%EC%9D%B8%20%EA%B0%9D%EC%B2%B4)

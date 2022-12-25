@@ -670,10 +670,258 @@ globalThis.myGlobalVar = 'value of myGlobalVar';
 
 `parseInt()` 를 사용할 때 주의점은 `진수` 를 적용시키고자 할 때, `0b10` 과 같은 `2진수 리터럴` 이나 `0o10` 과 같은 `8진수 리터럴` 은 비정상 동작을 한다는 점 입니다.
 
-때문에 `진수 변환` 까지 적용하고자 한다면, 반드시 `두번째 인자` 에 `진수값` 을 넘겨주는 형태로 사용하여야 합니다.
+때문에 `parseInt()` 의 첫번째 인자에는 `10진수 리터럴` 을 넘겨주고, `진수 변환` 까지 적용하고자 한다면, 반드시 `두번째 인자` 에 `진수값` 을 넘겨주는 형태로 사용하여야 합니다.
 
 <br />
 
-// TODO: parseInt() 의 NaN, 공백 처리 정리하기
-// TODO: parseInt() 의 NaN, 공백 처리 정리하기
-// TODO: parseInt() 의 NaN, 공백 처리 정리하기
+`parseInt()` 의 첫번째 인자로 넘겨준 문자열에 공백이 있다면, `parseInt()` 로 변환되는 대상은 `첫번째 공백` 전까지의 문자열이 됩니다.
+
+그리고 변환 대상이 되는 문자열에는 `trim()` 을 적용한 후, 변환을 합니다.
+
+<br />
+
+만약 `첫번째 문자열` 을 `number` 타입으로 변환할 수 없다면, `NaN` 을 반환합니다.
+
+<br />
+
+```javascript
+(function() {
+  // parseInt('3.14'): 3
+  console.log('parseInt("3.14"): ', parseInt('3.14'));
+
+  // parseInt('10.00'): 10
+  console.log('parseInt("10.00"): ', parseInt('10.00'));
+
+  // parseInt('33 44 55'): 33
+  console.log('parseInt("33 44 55"): ', parseInt('33 44 55'));
+
+  // parseInt('333 Hello World'): 333
+  console.log('parseInt("123 Hello World"): ', parseInt('123 Hello World'));
+
+  // parseInt('Hello World 333'): NaN
+  console.log('parseInt("Hello World 333"): ', parseInt('Hello World 333'));
+
+  // parseInt(' 7 '): 7
+  console.log('parseInt(" 7 "): ', parseInt(' 7 '));
+}());
+```
+
+
+
+<br /><hr /><br />
+
+
+
+# 6-6. encodeURI / decodeURI
+
+사용자가 인터넷을 통해서 원하는 정보를 얻기 위해서는 해당 정보의 위치를 알아야 합니다.
+
+`URI (Uniform Resource Identifier)` 는 인터넷에 있는 자원의 `유일한 주소` 를 의미합니다.
+
+`URI` 의 구성요소는 다음과 같습니다.
+
+* 예시용 전체 주소
+  * `https://github.com:8080/Chocobe/?first-query=Hello World&second-query=333&third-query=초코비#title`
+
+* URI
+  * 자원이 위치한 인터넷상의 `유일한 주소` 이며, `전체 주소` 입니다.
+  * 예) `https://github.com:8080/Chocobe/?first-query=Hello World&second-query=333&third-query=초코비#title`
+
+* Scheme (Protocol)
+  * `http` 또는 `https` 를 의미 합니다.
+
+* Host (Domain)
+  * 리소스에 접근하기 위한 호스트명 입니다.
+  * 예): `www.github.com`
+
+* Port
+  * 리소스에 접근하기 위한 포트번호 입니다.
+  * 예): `:8080`
+
+* Path
+  * 접근할 리소스가 위치한 상세 경로 입니다.
+  * 예) `/Chocobe/`
+
+* Query (Query String)
+  * 리소스에 접근하기 위해 접근 대상에게 넘겨주는 추가 정보(Parameter) 입니다.
+  * 예) `?first-query=HelloWorld&second-query=333&third-query=초코비`
+
+* Fragment
+  * 접근할 리소스 중에서 서브 리소스에 접근하기 위한 서브 리소스 식별자
+  * 예) `#title`
+
+<br />
+
+위에서 살펴본 `URI` 는 `URI 문법 형식 표준 RFC3986` 을 준수해야 합니다.
+
+`URI 문법 형식 표준 RFC3986` 에 따르면, 다음과 같은 조건이 있습니다.
+
+> URI 는 `아스키 문자셋` 으로만 구성되어야 하며, 이를 지키지 않을 경우에는 동작하지 않거나 의도치 않은 동작을 하는 문제가 발생할 수 있습니다.
+
+<br />
+
+공백이나 한글, 특수문자와 같은 문자들은 `아스키 문자셋` 에 포함되지 않습니다.
+
+때문에 `URI` 로 사용할 수 없습니다.
+
+이렇게 `URI` 로 사용할 수 없는 문자를 `이스케이프 처리` 하는 것을 `Encoding (인코딩)` 이라고 합니다.
+
+* `이스케이프 처리` 란, 어떠한 시스템에서도 읽을 수 있는 `아스키 문자셋` 으로 변환하는 것을 말합니다.
+* `인코딩` 대상에서 `?`, `=`, `&` 문자는 인코딩 대상에서 `제외` 합니다. (인코딩 하지 않는 문자)
+
+<br />
+
+자바스크립트에서는 `Encoding (인코딩)` 을 위해 `encodeURI()` 함수를 제공 합니다.
+
+<br />
+
+```javascript
+(function() {
+  const FULL_URI = 'https://github.com:8080/Chocobe/?first-query=Hello World&second-query=333&third-query=초코비#title';
+
+  const encodingURI = encodeURI(FULL_URI);
+
+  // https://github.com:8080/Chocobe/?first-query=Hello%20World&second-query=333&third-query=%EC%B4%88%EC%BD%94%EB%B9%84#title
+  console.log(encodingURI);
+}());
+```
+
+<br />
+
+이렇게 `인코딩` 된 문자열을 `이스케이프 처리 이전` 으로 복구하는 것을 `Decoding (디코딩)` 이라고 합니다.
+
+자바스크립트에서 제공하는 `디코딩` 함수는 `decodeURI()` 입니다.
+
+<br />
+
+```javascript
+(function() {
+  const FULL_URI = 'https://github.com:8080/Chocobe/?first-query=Hello World&second-query=333&third-query=초코비#title';
+
+  const encodingURI = encodeURI(FULL_URI);
+
+  // https://github.com:8080/Chocobe/?first-query=Hello%20World&second-query=333&third-query=%EC%B4%88%EC%BD%94%EB%B9%84#title
+  console.log(encodingURI);
+
+  const decodingURI = decodeURI(encodingURI);
+
+  // https://github.com:8080/Chocobe/?first-query=Hello World&second-query=333&third-query=초코비#title
+  console.log(decodingURI);
+}());
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 6-7. encodeURIComponent / decodeURIComponent
+
+`encodeURIComponent()` 역시 `인수` 로 전달받는 문자열을 `이스케이프 처리` 를 합니다.
+
+다시말해 문자열을 `인코딩` 하는 함수 입니다.
+
+<br />
+
+`encodeURI()` 함수와 동일한 기능을 하지만, `인코딩` 대상에서 차이점이 있습니다.
+
+`encodeURI()` 는 인코딩을 할 때 `?`, `=`, `&` 문자는 인코딩 하지 않습니다.
+
+반면 `encodeURIComponent()` 는 `모든 문자` 를 인코딩 합니다.
+
+이러한 동작 차이가 있는 이유는 `encodeURIComponent()` 은 `URI` 중 `Query String` 을 인코딩 하기위한 목적을 가졌기 때문입니다.
+
+그러므로, `encodeURIComponent()` 를 사용할 때는 `Query String` 만을 넘겨주는 것이 좋습니다.
+
+<br />
+
+```javascript
+(function() {
+  const queryString = 'first-query=Hello World&second-query=333&third-query=초코비';
+  const encodeURIComponentResult = encodeURIComponent(queryString);
+  const encodeURIResult = encodeURI(queryString);
+
+  // first-query%3DHello%20World%26second-query%3D333%26third-query%3D%EC%B4%88%EC%BD%94%EB%B9%84
+  console.log('encodeURIComponent(queryString):\n\t', encodeURIComponentResult);
+
+  // first-query=Hello%20World&second-query=333&third-query=%EC%B4%88%EC%BD%94%EB%B9%84
+  console.log('encodeURI(queryString):\n\t', encodeURIResult);
+
+  const decodeURIComponentResult = decodeURIComponent(encodeURIComponentResult);
+  const decodeURIResult = decodeURI(encodeURIResult);
+
+  // first-query=Hello World&second-query=333&third-query=초코비
+  console.log('decodeURIComponent(encodeURIComponentResult):\n\t', decodeURIComponentResult);
+  // first-query=Hello World&second-query=333&third-query=초코비
+  console.log('decodeURI(encodeURIResult):\n\t', decodeURIResult);
+}());
+```
+
+
+
+<br /><hr /><br />
+
+
+
+# 7. 암묵적 전역
+
+자바스크립트는 선언하지 않은 변수에 값을 할당하게 되면 에러를 발생시키지 않고, 동적으로 `전역 프로퍼티` 를 생성하여 정상 동작하도록 합니다.
+
+이러한 현상을 `암묵적 전역 (Implicit Global)` 이라고 합니다.
+
+<br />
+
+`암묵적 전역` 으로 추가된 `전역 프로퍼티` 는 변수가 아닌 `프로퍼티` 의 성격을 갖게 됩니다.
+
+정상적으로 전역 변수를 선언한 경우, 이는 변수이므로 `delete` 연산자를 사용할 수 없습니다.
+
+하지만 `암묵적 전역` 으로 추가된 `전역 프로퍼티` 는 `delete` 연산자를 사용하여 프로퍼티 삭제를 할 수 있습니다.
+
+`전역 변수` 와 `전역 프로퍼티` 의 접근방법이 동일하기 때문에 개발단계의 혼란을 초래할 수 있습니다.
+
+* `전역 변수` 접근 방법: `window.전역_변수명`
+* `전역 프로퍼티` 접근 방법: `window.전역_프로퍼티명`
+
+<br />
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      var x = 10;
+
+      function myFunction() {
+        y = 20;
+
+        console.log('x + y: ', x + y);
+      }
+      myFunction();
+
+      // window.x: 10
+      console.log('window.x: ', window.x);
+
+      // window.y: 20
+      console.log('window.y: ', window.y);
+
+      // x 는 `전역 변수` 이므로 `delete` 연산자가 무시 됩니다.
+      delete window.x;
+      // window.x: 10
+      console.log('window.x: ', window.x);
+
+      // y 는 `암묵적 전역` 으로 생성된, `전역 프로퍼티` 이므로, `delete` 연산자로 `y` 프로퍼티를 삭제 합니다.
+      delete window.y;
+      // window.y: undefined
+      console.log('window.y: ', window.y);
+    </script>
+  </body>
+</html>
+```

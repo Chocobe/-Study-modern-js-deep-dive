@@ -48,3 +48,24 @@ console.log('');
 
 
 console.log('');
+
+
+(function() {
+  // parseInt('3.14'): 3
+  console.log('parseInt("3.14"): ', parseInt('3.14'));
+
+  // parseInt('10.00'): 10
+  console.log('parseInt("10.00"): ', parseInt('10.00'));
+
+  // parseInt('33 44 55'): 33
+  console.log('parseInt("33 44 55"): ', parseInt('33 44 55'));
+
+  // parseInt('333 Hello World'): 333
+  console.log('parseInt("123 Hello World"): ', parseInt('123 Hello World'));
+
+  // parseInt('Hello World 333'): NaN
+  console.log('parseInt("Hello World 333"): ', parseInt('Hello World 333'));
+
+  // parseInt(' 7 '): 7
+  console.log('parseInt(" 7 "): ', parseInt(' 7 '));
+}());
