@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      // 전역 스코프의 전역 변수 myValue 로 등록됨
+      // 추가로 
+      // 전역객체의 전역 프로퍼티 myValue 로 등록됨
+      var myValue = 3;
+      const myConstValue = 'Const Value';
+
+      console.group('var 를 사용한 전역 변수 선언');
+      console.log('(전역 스코프) myValue: ', myValue);
+      console.log('(전역 객체) window.myValue: ', window.myValue);
+      console.groupEnd();
+
+      function myFunction(groupMessage) {
+        console.log(groupMessage);
+      }
+
+      myFunction('(전역 스코프) called myFunction from GlobalScope');
+      window.myFunction('(전역 객체) called myFunction from globalObject');
+
+      console.log('myConstValue: ', myConstValue);
+      // 전역 객체의 프로퍼티에는 등록되지 않기 때문에
+      // "window.myConstValue: undefined" 
+      console.log('window.myConstValue: ', window.myConstValue);
+    </script>
+  </body>
+</html>
