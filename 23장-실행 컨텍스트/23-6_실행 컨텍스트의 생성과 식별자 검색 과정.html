@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      // 전역 변수 x 선언
+      // 전역 객체의 프로퍼티 x 등록
+      var x = 1;
+
+      // 전역 변수 y 선언
+      const y = 2;
+
+      // 전역 함수 foo() 선언
+      // 전역 객체의 메서드 foo() 등록
+      function foo(a) {
+        // foo() 함수 스코프의 지역 변수 x 선언
+        var x = 3;
+
+        // foo() 함수 스코프의 지역 변수 y 선언
+        const y = 4;
+
+        // foo() 함수 스코프의 지역 함수 bar() 선언
+        function bar(b) {
+          // bar() 함수 스코프의 지역 변수 z 선언
+          const z = 5;
+          console.log(a + b + x + y + z);
+        }
+
+        // foo() 함수 스코프의 지역 함수 bar() 호출
+        bar(10);
+      }
+
+      // 전역 스코프 함수이며 전역 객체의 메서드인 foo() 호출
+      foo(20); // 42
+    </script>
+  </body>
+</html>
