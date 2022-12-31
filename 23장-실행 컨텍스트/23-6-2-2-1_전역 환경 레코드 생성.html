@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      var x = 1;
+
+      function myFunction() {
+        // const 로 선언한 지역변수 x 의 선언문 이전에 참조하는 상태
+        // ReferenceError 발생
+        // => let, const 변수에 `호이스팅 (Hoistin)` 현상이 없다면, 에러가 아닌 `전역 변수 x` 를 참조하게 됩니다.
+        console.log('x: ', x);
+
+        const x = 333;
+      }
+
+      myFunction();
+    </script>
+  </body>
+</html>
