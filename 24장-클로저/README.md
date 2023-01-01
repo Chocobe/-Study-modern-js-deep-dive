@@ -127,7 +127,7 @@
                 1. `function myFunction()` 에 대한 `Function 객체` 생성
                     * [[Environment]] 에 `전역 렉시컬 환경` 에 대한 참조값 저장
                 2. `function yourFunction()` 에 대한 `Function 객체` 생성
-                    * [[Environment]]` 에 `전역 렉시컬 환경` 에 대한 참조값 저장
+                    * `[[Environment]]` 에 `전역 렉시컬 환경` 에 대한 참조값 저장
             2. 선언적 환경 레코드 생성
         2. this 바인딩 (`[[GlobalThisValue]]`)
         3. 외부 렉시컬 환경에 대한 참조값 저장 (`null`)
@@ -251,3 +251,293 @@ innerFunction(); // 10
 
 
 
+# 4. 클로저의 활용
+
+함수형 프로그래밍 언어에서 `클로저 (Closure)` 를 사용하는 목적이 있습니다.
+
+`클로저 (Closure)` 는 `상태 (State)` 가 의도치 않게 변경되지 않도록 방지하기 위한, `은닉 (Information Hiding)` 을 목적으로 사용합니다.
+
+이는 `상태 (State)` 를 바꿀 수 있는 방법을 `특정 함수` 에만 허용하는 방법이 되며, 이렇게 지정한 방법이 아닌 함수는 `상태 (State)` 를 바꿀 수 없도록 합니다.
+
+그러므로 `클로저 (Closure)` 는 `특정 함수` 를 사용하지 않으면 `상태 (State)` 를 바꿀 수 없도록, 안전한 `상태 변경` 과 `상태 유지` 를 위해 사용 합니다.
+
+<br />
+
+`클로저 (Closure)` 사용 여부에 따른 `상태 (State)` 를 `은닉 (Information Hiding)` 이 어떻게 되는지, 카운터 프로그램 코드를 통해 살펴보겠습니다.
+
+<br />
+
+## 4-1. 전역 상태 (전역 변수) 를 사용한 카운터 프로그램
+
+아래의 코드는 `전역 상태 (전역 변수)` 를 사용하여 카운터값을 관리합니다.
+
+때문에 카운터값을 어디서나 임의의 값으로 변경할 수 있게 되며, 이는 카운터 프로그램으로써 의도치 않은 동작이 될 수 있습니다.
+
+<br />
+
+```javascript
+// 카운터 상태값 (전역 변수)
+let countValue = 0;
+
+// 카운터 상태 변경 함수
+const increase = function() {
+  return ++countValue;
+};
+
+console.log(increase()); // 1
+console.log(increase()); // 2
+console.log(increase()); // 3
+
+// 카운터 상태값은 전역 변수 이므로, 어디서나 임의의 값으로 변경할 수 있는 문제점을 가지고 있습니다.
+countValue = 0
+console.log(increase()); // 1
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 4-2. 전역 상태 => 지역 변수 로 변경한 카운터 프로그램
+
+위 코드의 문제점은 `상태 (State)` 가 `전역 변수` 이기 때문에, 어디서나 임의의 값으로 바꿀 수 있다는 것 이었습니다.
+
+`전역 변수` 였던 `상태 (State)` 를 `함수` 의 `지역 변수` 로 수정해 보면, 다음과 같습니다.
+
+<br />
+
+```javascript
+function increase() {
+  // 함수를 호출할 때마다 새로운 `렉시컬 환경` 을 생성,
+  // 즉, `함수 코드 평가` 과정에서 지역변수 countValue 를 생성하고,
+  // `함수 코드 실행` 과정에서 0으로 초기화 합니다.
+  let countValue = 0;
+
+  return ++countValue;
+}
+
+// increase() 함수를 호출할 때마다, 새로운 렉시컬 환경을 생성하게 됩니다.
+console.log(increase()); // 1
+console.log(increase()); // 1
+console.log(increase()); // 1
+```
+
+<br />
+
+위 코드에서는 `상태 (State)` 를 바꾸기 위해서는 오직 `increase()` 함수를 통해서만 가능하도록 되었습니다.
+
+하지만, `increase()` 를 호출할 때마다, `상태 (State)` 도 새롭게 생성되기 때문에 `이전 상태값` 을 유지할 수 없는 문제점이 있습니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 4-3. 클로저를 사용하여 이전 상태값을 유지하는 카운터 프로그램
+
+위 코드는 `increase()` 를 호출할 때마다 `상태 (State)` 를 새로 생성하고 있습니다.
+
+이유는 `increase()` 의 지역변수로 `상태 (State)` 를 관리하고 있기 때문입니다.
+
+`이전 상태값` 을 유지하기 위해서는 `increase()` 에서 선언한 `countValue` 를 `상위 렉시컬 환경` 에서 선언하는 것 입니다.
+
+즉, `increase()` 함수를 `클로저 (Closure)` 로 만들고, 카운터 상태값은 `자유 변수 (Free Variable)` 로 만드는 방법 입니다.
+
+<br />
+
+```javascript
+const increase = (function() {
+  // 자유 변수 (Free Variable)
+  let countValue = 0;
+
+  // 클로저 (Closure)
+  return function() {
+    return ++countValue;
+  };
+}());
+
+console.log(increase()); // 1
+console.log(increase()); // 2
+console.log(increase()); // 3
+```
+
+<br />
+
+이처럼 `클로저 (Closure)` 를 사용하면, `상태 (State)` 변경을 `특정 함수` 호출에 의해서만 가능하도록 구현할 수 있습니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 4-4. decrease() 기능이 추가된 카운터 프로그램
+
+`decrease()` 기능이 추가된 카운터 프로그램을 구현하면 다음과 같습니다.
+
+`increase()` 와 `decrease()` 가 동일한 `자유 변수 (Free Variable)` 을 참조하도록 구현하기 위해, `카운터 객체 생성` 방식으로 구현하게 됩니다.
+
+<br />
+
+```javascript
+// increase() 와 decrease() 메서드를 가지는 카운터 객체 생성
+const counter = (function() {
+  // 자유 변수 (Free Variable)
+  let countValue = 0;
+
+  return {
+    increase() {
+      return ++countValue;
+    },
+    decrease() {
+      return --countValue;
+    },
+  };
+}());
+
+console.log(counter.increase()); // 1
+console.log(counter.increase()); // 2
+console.log(counter.increase()); // 3
+
+console.log(counter.decrease()); // 2
+console.log(counter.decrease()); // 1
+console.log(counter.decrease()); // 0
+```
+
+<br />
+
+위 코드는 `increase()` 와 `decrease()` 메서드를 가진 객체를 반환 합니다.
+
+즉, 카운터 객체를 생성하는 동작이므로, `생성자 함수` 로 변경할 수 있습니다.
+
+<br />
+
+```javascript
+const CounterConstructor = (function() {
+  // 자유 변수 (Free Variable)
+  let countValue = 0;
+
+  // 생성자 함수
+  function CounterConstructor() {
+    // this.countValue = 0; 으로 프로퍼티 지정 시, countValue 는 `은닉` 되지 않기 때문에, 자유변수 (Free Variable) 을 사용합니다.
+  }
+
+  CounterConstructor.prototype.increase = function() {
+    return ++countValue;
+  };
+
+  CounterConstructor.prototype.decrease = function() {
+    return --countValue;
+  };
+
+  return CounterConstructor;
+}());
+
+const myCounter = new CounterConstructor();
+
+console.log(myCounter.increase());
+console.log(myCounter.increase());
+console.log(myCounter.increase());
+
+console.log(myCounter.decrease());
+console.log(myCounter.decrease());
+console.log(myCounter.decrease());
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 4-5. 고차함수를 사용한 카운터 프로그램
+
+위에서 구현한 방식의 카운터 프로그램은 `클로저 (Closure)` 와 `객체지향` 방식으로 구현한 결과 입니다.
+
+`함수형 프로그래밍` 방식으로 구현한다면, `클로저 (Closure)` 와 `고차함수 (HOF: Higher Order Function)` 를 활용합니다.
+
+<br />
+
+```javascript
+function createCounter(aux) {
+  // 자유변수 (Free Variable)
+  let countValue = 0;
+
+  return function() {
+    countValue = aux(countValue);
+    return countValue;
+  };
+}
+
+// 보조 함수
+function increase(value) {
+  return ++value;
+}
+
+function decrease(value) {
+  return --value;
+}
+
+// increaser() 와 decreaser() 의 상위 렉시컬 환경은 서로 다릅니다.
+const increaser = createCounter(increase);
+const decreaser = createCounter(decrease);
+
+console.log(increaser()); // 1
+console.log(increaser()); // 2
+console.log(increaser()); // 3
+
+console.log(decreaser()); // -1
+console.log(decreaser()); // -2
+console.log(decreaser()); // -3
+```
+
+<br />
+
+위 코드의 문제점은 `increaser()` 와 `decreaser()` 의 `상위 렉시컬 환경` 이 다르다는 것 입니다.
+
+때문에 `increaser()` 가 참조하는 `자유변수 (Free Variable)` 과 `decreaser()` 가 참조하는 `자유변수 (Free Variable)` 은 서로 다른 변수이며, 상태값은 개별로 관리하게 됩니다.
+
+이러한 현상이 발생한 이유는 다음과 같습니다.
+
+* 서로 다른 함수가 `동일한 상위 렉시컬 환경` 을 가져야 합니다.
+* 이를 위해서는 `자유변수 (Free Variable)` 이 선언된 함수는 `최초 1회` 만 호출되어야 합니다.
+* `상위 렉시컬 환경` 에 해당하는 함수는 `인수` 로 `함수` 를 받는 `고차함수 (HOF: Higher Order Function)` 을 `클로저 (Closure)` 로 반환해야 합니다.
+* 값 증가, 값 감소 와 같은 상태값 변경은 `클로저 (Closure)` 에 `인수` 로 넘겨주는 `보조 함수` 로 정의합니다.
+
+<br />
+
+아래의 코드는 `클로저 (Closure)` 와 `고차함수 (HOF: Higher Order Function)` 를 사용하여 정상적인 증가, 감소 기능을 제공하는 카운터 프로그램 입니다.
+
+<br />
+
+```javascript
+// 클로저와 고차함수를 사용한 함수형 프로그래밍으로 구현한 카운터 프로그램 완성형
+const perfectCounter = (function() {
+  // 자유 변수 (Free Variable)
+  let countValue = 0;
+
+  return function(aux) {
+    countValue = aux(countValue);
+    return countValue;
+  };
+}());
+
+// 보조 함수
+function increase(value) {
+  return ++value;
+}
+
+function decrease(value) {
+  return --value;
+}
+
+console.log(perfectCounter(increase)); // 1
+console.log(perfectCounter(increase)); // 2
+console.log(perfectCounter(increase)); // 3
+
+console.log(perfectCounter(decrease)); // 2
+console.log(perfectCounter(decrease)); // 1
+console.log(perfectCounter(decrease)); // 0
+```
