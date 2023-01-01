@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      const x = 1;
+
+      function myFunction() {
+        const x = 10;
+        yourFunction();
+      }
+
+      // 이 함수의 렉시컬 스코프는 `전역 객체` 의 `렉시컬 환경` 입니다.
+      // 호출 방식에 영향없이, 렉시컬 스코프에 의해 상위 스코프인 `전역 렉시컬 환경` 에서 `변수 x` 를 찾게 됩니다.
+      function yourFunction() {
+        console.log(x);
+      }
+
+      myFunction(); // 1
+      yourFunction(); // 1
+    </script>
+  </body>
+</html>
