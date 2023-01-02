@@ -541,3 +541,164 @@ console.log(perfectCounter(decrease)); // 2
 console.log(perfectCounter(decrease)); // 1
 console.log(perfectCounter(decrease)); // 0
 ```
+
+
+
+<br /><hr /><br />
+
+
+
+# 5. 캡슐화와 정보 은닉
+
+`캡슐화 (Encapsulation)` 은 객체에 `상태 (State)` 와 `메서드 (Method)` 를 하나로 묶는것을 말합니다.
+
+`캡슐화` 를 하는 목적은, 외부에 비공개할 `상태` 나 `메서드` 를 객체 내부에 숨기기 위해서 입니다.
+
+<br />
+
+`객체지향 프로그래밍 언어` 에서는 객체의 상태나 메서드를 숨기기 위해 `접근자` 키워드를 제공 합니다.
+
+* `public`: 공개
+* `protected`: 같은 패키지 내부에서는 접근 가능
+* `private`: 비공개
+
+<br />
+
+
+자바스크립트는 이러한 `접근자` 키워드를 제공하지는 않습니다.
+
+그래서 `클로저 (Closure)` 를 사용하여 `private` 처럼 `비공개` 처리를 할 수 있습니다.
+
+앞서 살펴보았던 카운터 프로그램의 `countValue` 처럼 `자유변수 (Free Variable)` 이 `private state (비공개 상태)` 가 됩니다.
+
+<br />
+
+하지만 `클로저 (Closure)` 와 `생성자 함수` 의 `prototype` 에 `메서드`를 구현하여 `캡슐화` 를 하면, 인스턴스의 메서드에서 `잘못된 상태값` 을 참조하는 문제가 있습니다.
+
+아래의 코드는 의도치 않은 동작을 하는 `prototype` 의 메서드 예시 입니다.
+
+<br />
+
+```javascript
+const Person = (function() {
+  // 자유변수 (Free Variable)
+  // private 프로퍼티 입니다.
+  let _age;
+
+  function Person(name, age) {
+    // public 프로퍼티 입니다.
+    this.name = name;
+    _age = age;
+  }
+
+  // Person 인스턴스가 상속받을 메서드이며, 
+  // sayGreeting() 메서드는 모든 인스턴스가 `동일한 함수 객체` 를 참조합니다.
+  // 인스턴스를 생성할 때마다, sayGreeting() 함수의 `렉시컬 환경` 이 변경 됩니다.
+  Person.prototype.sayGreeting = function() {
+    console.log(`Hello, I'm ${this.name} and ${_age}`);
+  };
+
+  return Person;
+}());
+
+// Person.prototype.sayGreeting() 이 참조하는 `자유변수`
+// _age === 36
+const chocobe = new Person('Chocobe', 36);
+
+// Person.prototype.sayGreeting() 이 참조하는 `자유변수`
+// _age === 22
+const kim = new Person('Kim', 22);
+
+// 마지막으로 Person 객체를 생성하면서 넘겨주었던 `age`값, `22` 를 Person.prototype.sayGreeting() 이 참조하게 됩니다.
+// 모든 Person 인스턴스의 sayGreeting() 은 `22` 를 참조하게 됩니다.
+
+// "Hello, I'm Chocobe and 22"
+kim.sayGreeting();
+
+// "Hello, I'm Kim and 22"
+chocobe.sayGreeting();
+```
+
+<br />
+
+위 코드에서 볼 수 있듯이, `생성자 함수` 의 `prototype` 을 사용하여 `메서드` 를 `상속` 받도록 구현하게 되면, 헤당 메서드에서 참조하는 `자유변수 (Free Variable)` 의 상태값이 모두 공통으로 묶여버리는 문제가 발생 합니다.
+
+이는 `생성자_함수.prototype.메서드` 의 `렉시컬 스코프` 를 모든 인스턴스가 공유하기 때문 입니다.
+
+즉, `자유변수 (Free Variable)` 이 선언된 `렉시컬 스코프` 가 동일하기 때문에, 새로운 인스턴스를 생성할 때마다, `자유변수 (Free Variable)` 에 재할당되며 발생하는 현상 입니다.
+
+<br />
+
+정리하면 다음과 같습니다.
+
+* `생성자 함수` 의 `상태 (State)` 나 `메서드 (Method)` 를 `캡슐화 (Encapsulation)` 하기 위한 방법으로, `자유변수 (Free Variable)` 를 사용할 수는 없습니다.
+* 자바스크립트는 완벽한 `정보 은닉 (Information Hiding)` 을 제공하지는 않습니다.
+
+
+
+<br /><hr /><br />
+
+
+
+# 6. 자주 발생하는 실수
+
+`for 반복문` 에는 반복 조건을 위한 `식별자` 를 선언하여 사용합니다.
+
+일반적으로는 `i` 를 사용 합니다.
+
+<br />
+
+아래의 코드는 `for 반복문` 의 `식별자` 를 선언할 때 `var` 키워드를 사용하고, `for 반복문` 내부에서 함수를 만드는 경우 입니다.
+
+<br />
+
+```javascript
+const myFunctions = [];
+
+// var 키워드로 선언한 변수는 `함수 레벨 스코프` 를 따릅니다.
+// 그러므로, `var i` 는 전역변수가 됩니다.
+for (var i = 0; i < 3; i++) {
+  // 차후 이 함수를 호출하면, 이 시점의 `전역변수 i` 의 값을 반환합니다.
+  myFunctions[i] = function() {
+    // 항상 3 반환
+    return i;
+  };
+}
+
+for (var j = 0; j < 3; j++) {
+  console.log(myFunctions[j]());
+  // 3
+  // 3
+  // 3
+}
+```
+
+<br />
+
+`for 문` 의 반복문일 시작할 때마다, `블록 레벨 스코프` 를 생성합니다.
+
+그리고 `블록 레벨 스코프` 를 따르는 `let` 키워드로 `식별자` 를 선언하게 되면, `let 변수` 는 `for 문` 이 반복할 때마다 생성하는 새로운 `블록 레벨 스코프` 에 선언되게 됩니다.
+
+그러므로 `for 문` 내부에서 생성한 함수의 `[[Environment]]` 가 참조하는 각각의 `렉시컬 스코프 (상위 스코프)` 에 `let 변수` 가 선언되며, 우리가 의도했던 동작을 하게 됩니다.
+
+<br />
+
+```javascript
+const yourFunctions = [];
+
+// let 이나 const 키워드로 선언한 변수는 `블록 레벨 스코프` 를 따릅니다.
+// 그러므로, for 반복문이 반복할 때마다 생성하는 `블록 레벨 스코프` 에 `let x` 가 선언 됩니다.
+for (let x = 0; x < 3; x++) {
+  // 생성하는 함수의 `[[Environment]]` 는 `for 반복문` 이 반복할 때마다 생성하는 `블록 레벨 스코프` 를 참조합니다.
+  yourFunctions[x] = function() {
+    return x;
+  };
+}
+
+for (let y = 0; y < 3; y++) {
+  console.log(yourFunctions[y]());
+  // 0
+  // 1
+  // 2
+}
+```
