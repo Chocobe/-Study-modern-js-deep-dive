@@ -137,3 +137,297 @@ class Person {
 
 
 
+# 3. 클래스 호이스팅
+
+자바스크립트의 `class` 는 `함수` 입니다.
+
+그래서 `typeof` 연산자를 사용하여 `class` 를 평가하면, `"function"` 으로 평가 됩니다.
+
+<br />
+
+```javascript
+class Person {
+  name = null;
+  age = null;
+
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  sayGreeting() {
+    console.log(`Hello, I'm ${this.name} and ${this.age}`);
+  }
+}
+
+console.log('typeof Person: ', typeof Person);
+```
+
+<br />
+
+자바스크립트의 모든 식별자는 `호이스팅 (Hoisting)` 이 발생 합니다.
+
+`class` 도 마찬가지로 `호이스팅` 이 발생하지만, `class 선언문` 이전에 접근하게 되면 `ReferenceError` 를 발생시킵니다.
+
+이는 `class` 에는 호이스팅이 발생하지 않는 것 처럼 보이지만, 사실은 `let`, `const` 처럼 `일시적 사각지대 (TDZ: Temporal Dead Zone)` 이 존재하기 때문 입니다.
+
+<br />
+
+정리하면, 다음과 같습니다.
+
+* 자바스크립트의 `모든 식별자` 에는 `호이스팅 (Hoisting)` 현상이 발생 합니다.
+* `class` 는 `함수` 객체 입니다.
+* `class` 는 `function` 이지만, `let`, `const` 처럼 `선언 단계` 와 `초기화 단계` 를 가지며, `일시적 사각지대 (TDZ: Temporal Dead Zone)` 가 존재 합니다.
+* `class` 도 `호이스팅` 이 발생하지만, `일시적 사각지대` 가 존재하므로, 선언문 이전에 참조할 수 없습니다.
+
+<br />
+
+```javascript
+const Person = 'Person String Value';
+
+// 블록 스코프 생성
+{
+  // 현재 블록 스코프를 평가할 때, Person 식별자를 평가 합니다. (식별자 선언 단계)
+  // let, const 처럼 class 도 `초기화 단계` 이전에 참조하게 되면 `ReferenceError` 를 발생 시킵니다.
+  // 실행단계에서 현재 라인을 실행 시점에는, 아직 `class Person` 의 초기화 단계가 
+  console.log(Person);
+
+  class Person {
+    //
+  };
+}
+```
+
+
+
+<br /><hr /><br />
+
+
+
+# 4. 인스터스 생성
+
+`class` 는 `함수` 라고 하였습니다.
+
+하지만 `class` 를 일반함수 처럼 `[[Caller]]` 로 호출하게 되면 에러를 발생 시킵니다.
+
+<br />
+
+`class` 는 값으로 평가되는 `일급 객체` 이므로, `기명 함수 표현식` 처럼 `기명 클래스 표현식` 으로 만들수도 있습니다.
+
+주의할 점은 `기명 함수 표현식` 처럼 표현식에서 사용한 이름은 `class 내부` 에서만 유효하며 외부에서 참조할 경우 에러를 발생 시킵니다.
+
+<br />
+
+```javascript
+// 기명 클래스 표현식
+// MyPerson 식별자는 class 내부에서만 유효합니다.
+const Person = class MyPerson {
+  name = null;
+  age = null;
+
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  sayGreeting() {
+    console.log(`Hello, I'm ${this.name} and ${this.age}`);
+  }
+};
+
+// class 는 [[Caller]] 로 호출할 경우, 에러를 발생 시킵니다.
+// Person();
+
+// 기명 클래스 표현식에 사용한 이름은, 클래스 외부에서 사용할 수 없습니다.
+// ReferenceError
+// const chocobe = new MyPerson('Chocobe', 36);
+
+const kim = new Person('Kim', 20);
+kim.sayGreeting();
+```
+
+
+
+<br /><hr /><br />
+
+
+
+# 5. 메서드
+
+자바스크립트의 `class` 에는 3가지 메서드가 존재 합니다.
+
+* constructor (생성자)
+* 프로토타입 메서드
+* 정적 메서드
+
+<br />
+
+`class 몸체` 에 정의한 메서드는 `프로토타입 메서드` 가 되지만, `class 몸체` 에 정의한 프로퍼티는 `인스턴스 프로퍼티` 가 됩니다.
+
+<br />
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+
+  <body>
+    <script>
+      class Person {
+        // 인스턴스 프로퍼티
+        name = 'initial name'
+        // 인스턴스 프로퍼티
+        age = 'initial age'
+
+        // 생성자
+        constructor(name, age) {
+          // 인스턴스 프로퍼티 초기화
+          this.name = name;
+          this.age = age;
+        }
+
+        // prototype 메서드
+        sayGreeting() {
+          console.log(`Hello, I'm ${this.name} and ${this.age}`);
+        }
+      }
+
+      const chocobe = new Person('Chocobe', 36);
+      console.log(chocobe);
+    </script>
+  </body>
+</html>
+```
+
+<br />
+
+
+
+## 5-1. constructor
+
+`class` 의 메서드인 `constructor()` 는 인스턴스를 `생성` 하고 `초기화` 하는 특수한 메서드 입니다.
+
+코드 평가 단계에서 `class` 정의를 평가하게 되면, `constructor 동작` 을 하는 `Function` 객체를 생성합니다.
+
+<br />
+
+`constructor` 는 특수한 메서드로써 일반함수와는 다른 특징을 가집니다.
+
+* `constructor` 는 `class` 내에서 `최대 1개` 를 정의할 수 있습니다.
+* `constructor` 는 생략 가능하지만, 인스턴스의 초기화를 수행하기 때문에, 생략하지 않는것이 좋습니다.
+    * `constructor` 를 생략하게 되면, 암묵적으로 `비어있는 constructor` 를 정의 합니다.
+* `constructor` 내부에서 `this` 키워드의 프로퍼티를 추가하면, 인스턴스의 프로퍼티가 됩니다.
+* 인스턴스 생성시, 인스턴스 프로퍼티를 초기화하려면, `constructor` 의 `인자` 에 `초기화 값` 을 넘겨줍니다.
+* `constructor` 내부에는 반드시 `반환문 (return)` 을 사용하지 않아야 합니다.
+    * `constructor` 내부에 `반환문 (return)` 이 없다면, 암묵적으로 `this (생성한 인스턴스)` 를 반환 합니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 5-2. 프로토타입 메서드
+
+`class 몸체` 에 정의한 메서드는 `class` 의 `prototype 메서드` 가 됩니다.
+
+그리고 `class` 로 생성한 인스턴스는 `프로토타입 체인 (Prototype Chain)` 의 일원이 됩니다.
+
+아래의 코드를 통해 알 수 있듯이, `class` 도 `생성자 함수` 와 마찬가지로 `프로토타입 기반` 의 `객체 생성 메커니즘` 입니다.
+
+<br />
+
+```javascript
+class Person {
+  name = null;
+  age = null;
+
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  sayGreeting() {
+    console.log(`Hello, I'm ${this.name} and ${this.age}`);
+  }
+}
+
+const chocobe = new Person('Chocobe', 36);
+
+// Object.getPrototypeOf(chocobe).sayGreeint: [Function: sayGreeting]
+console.log(
+  'Object.getPrototypeOf(chocobe).sayGreeint: ', 
+  Object.getPrototypeOf(chocobe).sayGreeting
+);
+
+// Object.getPrototypeOf(chocobe).hasOwnProperty("sayGreeting"): true
+console.log(
+  'Object.getPrototypeOf(chocobe).hasOwnProperty("sayGreeting"): ',
+  Object.getPrototypeOf(chocobe).hasOwnProperty('sayGreeting')
+);
+
+// Object.getPrototypeOf(chocobe) === Person.prototype: true
+console.log(
+  'Object.getPrototypeOf(chocobe) === Person.prototype: ', 
+  Object.getPrototypeOf(chocobe) === Person.prototype
+);
+
+// Object.getPrototypeOf(Person.prototype) === Object.prototype: true
+console.log(
+  'Object.getPrototypeOf(Person.prototype) === Object.prototype: ',
+  Object.getPrototypeOf(Person.prototype) === Object.prototype
+);
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 5-3. 정적 메서드
+
+`정적(static) 메서드` 는 인스턴스가 아닌, `class` 의 `메서드` 입니다.
+
+`class 몸체` 에 `static` 키워드와 함께 `메서드` 를 정의하여 `정적 메서드` 를 정의할 수 있습니다.
+
+`정적 메서드` 는 `class` 의 메서드이기 때문에, 인스턴스를 통해서는 호출할 수 없다는 특징이 있습니다.
+
+<br />
+
+```javascript
+class Person {
+  name = null;
+  age = null;
+
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  static sayHello() {
+    console.log('Hello World');
+  }
+}
+
+const chocobe = new Person('Chocobe', 36);
+
+// 인스턴스가 속한 `프로토타입 체인` 에는 `정적 메서드` 가 없습닌다.
+// ReferenceError
+// chocobe.sayHello();
+
+// 정적 메서드 호출
+Person.sayHello();
+```
+
+
+
+<br /><hr /><br />
+
+
+
