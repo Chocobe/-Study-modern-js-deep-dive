@@ -572,3 +572,94 @@ const chocobe = new Person('Chocobe', 36);
 
 
 
+# 7. 프로퍼티
+
+## 7-1. 인스턴스 프로퍼티
+
+`class` 를 사용하여 생성한 인스턴스의 프로퍼티는 `class` 의 `constructor` 내부에서 정의할 수 있습니다.
+
+`constructor` 내부에서 `this` 에 `추가한 프로퍼티` 는 `인스턴스의 프로퍼티` 가 됩니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 7-2. 접근자 프로퍼티
+
+자바스크립트 객체의 프로퍼티는 두가지로 분류할 수 있었습니다.
+
+* 데이터 프로퍼티
+* 접근자 프로퍼티
+
+<br />
+
+`class` 를 사용하여 생성한 `인스턴스` 에도 동일하게 `데이터 프로퍼티` 와 `접근자 프로퍼티` 를 정의할 수 있습니다.
+
+`constructor` 내부에서 `this` 에 추가한 `프로퍼티` 가 인스턴스의 프로퍼티가 되는데, 이 프로퍼티는 `데이터 프로퍼티` 가 됩니다.
+
+그리고 `class 몸체` 에 정의한 `GETTER` 와 `SETTER` 메서드는 `접근자 프로퍼티` 가 됩니다.
+
+<br />
+
+객체의 접근자 프로퍼티와 동일한 특징을 가지며 다음과 같습니다.
+
+* `GETTER` 는 반드시 `값을 반환` 하여야 합니다.
+* `SETTER` 반드시 `1개의 매개변수` 를 정의하여야 합니다.
+
+<br />
+
+```javascript
+class Person {
+  firstName = null;
+  lastName = null;
+
+  constructor(firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
+  set fullName(fullName) {
+    [this.firstName, this.lastName] = fullName.split(' ');
+  }
+}
+
+const lucidMoon = new Person();
+lucidMoon.fullName = 'Lucid Moon';
+
+// Lucid Moon
+console.log(lucidMoon.fullName);
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 7-3. 클래스 필드 정의 제안
+
+`class` 로 생성할 인스턴스의 프로퍼티를 추가하는 방법은 두가지가 있습니다.
+
+* `constructor` 내부에서 `this` 에 프로퍼티를 추가하는 방법
+* `class 몸체` 에 프로퍼티를 추가하는 방법 (`TC39 - ECMA262` 의 `class field declarations`)
+
+<br />
+
+자바스크립트의 `함수` 는 `일급 객체` 이므로, `class` 의 프로퍼티에 `함수 표현식` 으로도 정의할 수 있지만, `인스턴스 프로퍼티` 에 추가된 `메서드` 는 인스턴스의 `__proto__` 가 아닌 (상속이 아닌) 인스턴스 개별로 가지는 메서드가 됩니다.
+
+그래서 인스턴스 각각에 대한 메모리에 `프로퍼티에 할당된 메서드` 가 개별로 존재하게 되며, 이는 메모리 낭비가 됩니다.
+
+이러한 이유로 `인스턴스의 프로퍼티` 에는 `함수 표현식` 으로 `메서드 정의` 하는 방식을 권장하지 않습니다.
+
+
+
+<br /><hr /><br />
+
+
+

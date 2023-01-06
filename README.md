@@ -10,6 +10,9 @@
 
 <br />
 
+* [자바스크립트 표준 사양 공식 문서](https://tc39.es/)
+* [자바스크립트 표준 사양 공식 Github](https://github.com/tc39)
+
 
 
 <br /><hr /><br />
