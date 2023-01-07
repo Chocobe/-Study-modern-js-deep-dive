@@ -663,3 +663,521 @@ console.log(lucidMoon.fullName);
 
 
 
+# 8. 상속에 의한 클래스 확장
+
+## 8-1. 클래스 상속과 생성자 함수 상속
+
+`class` 는 상속을 사용하여 확장할 수 있습니다.
+
+이렇게 확장한 `class` 는 상속받은 모든 프로퍼티와 메서드를 가지며, 자신만의 프로퍼티와 메서드를 추가로 가지게 됩니다.
+
+<br />
+
+이러한 상속 기능으로 `extends` 를 사용하며, 기존의 `생성자 함수` 에는 이러한 기능은 없습니다.
+
+아래의 코드는 `생성자 함수` 를 사용하여, `상속` 을 구현한 예시 입니다.
+
+<br />
+
+```javascript
+const Animal = (function() {
+  function Animal(age, weight) {
+    this.age = age;
+    this.weight = weight;
+  }
+
+  Animal.prototype.eat = function() {
+    return 'eat';
+  }
+
+  Animal.prototype.move = function() {
+    return 'move';
+  }
+
+  return Animal;
+}());
+
+const Bird = (function() {
+  function Bird() {
+    Animal.apply(this, arguments);
+  }
+
+  Bird.prototype = Object.create(Animal.prototype);
+  Bird.prototype.constructor = Bird;
+  Bird.prototype.fly = function() {
+    return 'fly';
+  };
+
+  return Bird;
+}());
+
+const bird = new Bird(11, 22);
+
+// eat
+console.log(bird.eat());
+
+// move
+console.log(bird.move());
+
+// fly
+console.log(bird.fly());
+
+// { age: 11, weight: 22 }
+console.dir(bird);
+```
+
+<br />
+
+아래의 코드는 `class` 에 `extends` 를 사용하여, `class` 상속 예시 입니다.
+
+<br />
+
+```javascript
+class Animal2 {
+  age;
+  weight;
+
+  constructor(age, weight) {
+    this.age = age;
+    this.weight = weight;
+  }
+
+  eat() {
+    return 'eat';
+  }
+
+  move() {
+    return 'move';
+  }
+}
+
+class Bird2 extends Animal2 {
+  fly() {
+    return 'fly';
+  }
+}
+
+const secondBird = new Bird2(33, 44);
+
+// eat
+console.log(secondBird.eat());
+
+// move
+console.log(secondBird.move());
+
+// fly
+console.log(secondBird.fly());
+
+// { age: 33, weight: 44 }
+console.log(secondBird);
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 8-2. extends 키워드
+
+`class` 를 확장하기 위해 사용한 `extends` 는 상속 관계를 설정해 줍니다.
+
+이렇게 확장된 `class` 와 상속해준 `class` 를 다음과 같이 부릅니다.
+
+* 상속해준 class 명칭
+    * 슈퍼 클래스
+    * 부모 클래스
+    * 베이스 클래스
+
+* 상속받은 class 명칭
+    * 서브 클래스
+    * 자식 클래스
+    * 파생 클래스
+
+<br />
+
+이렇게 상속받은 `class` 는 `부모 클래스` 의 `프로퍼티`, `메서드`, `정적 메서드` 모두를 상속 받게 됩니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 8-3. 동적 상속
+
+`extends` 키워드는 `class` 뿐만 아니라, `생성자 함수` 도 상속 받을 수 있습니다.
+
+`extends` 뒤에는 `[[Construct]]` 내부 메서드 를 가지는 `함수 객체` 는 모두 올 수 있습니다.
+
+정확히는 `[[Constructor]]` 내부 메서드를 가지는 `함수 객체` 로 평가될 수 있는 `모든 표현식` 이 올 수 있습니다.
+
+<br />
+
+```javascript
+// 동적 상속을 위한 상태값
+let isPlant = true;
+
+// 생성자 함수
+const Plant = (function() {
+  function Plant() {
+    //
+  }
+
+  return Plant;
+}());
+
+// class
+class Animal {
+  //
+}
+
+// `생성자 함수` 를 상속받은 `class`
+class DynamicExtendedClass extends (isPlant ? Plant : Animal) {
+  //
+}
+
+const plantInstance = new DynamicExtendedClass();
+
+// plantInstance instanceof Plant: true
+console.log(
+  'plantInstance instanceof Plant: ',
+  plantInstance instanceof Plant
+);
+
+// plantInstance instanceof DynamicExtendedClass: true
+console.log(
+  'plantInstance instanceof DynamicExtendedClass: ',
+  plantInstance instanceof DynamicExtendedClass
+);
+
+// plantInstance instanceof Animal: false
+console.log(
+  'plantInstance instanceof Animal: ',
+  plantInstance instanceof Animal
+);// 동적 상속을 위한 상태값
+let isPlant = true;
+
+// 생성자 함수
+const Plant = (function() {
+  function Plant() {
+    //
+  }
+
+  return Plant;
+}());
+
+// class
+class Animal {
+  //
+}
+
+// `생성자 함수` 를 상속받은 `class`
+class DynamicExtendedClass extends (isPlant ? Plant : Animal) {
+  //
+}
+
+const plantInstance = new DynamicExtendedClass();
+
+// plantInstance instanceof Plant: true
+console.log(
+  'plantInstance instanceof Plant: ',
+  plantInstance instanceof Plant
+);
+
+// plantInstance instanceof DynamicExtendedClass: true
+console.log(
+  'plantInstance instanceof DynamicExtendedClass: ',
+  plantInstance instanceof DynamicExtendedClass
+);
+
+// plantInstance instanceof Animal: false
+console.log(
+  'plantInstance instanceof Animal: ',
+  plantInstance instanceof Animal
+);
+```
+
+<br />
+
+주의할 점은 위와 같이 `표현식` 으로 `부모 클래스` 를 결정할 수 있지만 (동적 상속), 이미 `class` 평가가 완료된 이후에는 부모 클래스가 변경되지 않습니다.
+
+```javascript
+// 동적 상속을 위한 상태값
+let isPlant = true;
+
+// 생성자 함수
+const Plant = (function() {
+  function Plant() {
+    //
+  }
+
+  return Plant;
+}());
+
+// class
+class Animal {
+  //
+}
+
+// `생성자 함수` 를 상속받은 `class`
+class DynamicExtendedClass extends (isPlant ? Plant : Animal) {
+  //
+}
+
+const plantInstance = new DynamicExtendedClass();
+
+// plantInstance instanceof Plant: true
+console.log(
+  'plantInstance instanceof Plant: ',
+  plantInstance instanceof Plant
+);
+
+// plantInstance instanceof DynamicExtendedClass: true
+console.log(
+  'plantInstance instanceof DynamicExtendedClass: ',
+  plantInstance instanceof DynamicExtendedClass
+);
+
+// plantInstance instanceof Animal: false
+console.log(
+  'plantInstance instanceof Animal: ',
+  plantInstance instanceof Animal
+);
+
+
+
+console.log(' ');
+
+
+
+isPlant = false;
+const animalInstance = new DynamicExtendedClass();
+
+// animalInstance instanceof Animal: false
+console.log(
+  'animalInstance instanceof Animal: ',
+  animalInstance instanceof Animal
+);
+
+// isPlant 의 초기값이 `true` 였으므로, DynamicExtendedClass 는 Plant 클래스를 `부모 클래스` 로 가집니다.
+// 부모 클래스가 한전 정해졌으면 변경되지는 않습니다.
+console.log(
+  'animalInstance instanceof Plant: ',
+  animalInstance instanceof Plant
+);
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 8-4. 서브클래스의 constructor
+
+`class` 의 내부 메서드인 `[[Construct]]` 는 생략할 수 있습니다.
+
+만약 생략한다면, `class` 에 암묵적으로 아래와 같은 `constructor` 가 생성됩니다.
+
+<br />
+
+```javascript
+class Base {
+  // constructor 를 생략하였다면, 암묵적으로 생성될 constructor 형태
+  constructor() {}
+}
+
+class Child extends Base {
+  // 자식 클래스의 constructor 를 생략하면, 암묵적으로 아래와 같은 constructor 가 생성 됩니다.
+  constructor(...args) {
+    super(...args);
+  }
+}
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 8-5. super 키워드
+
+`super` 키워드는 인스턴스에서 `부모 클래스` 를 지칭합니다.
+
+`super` 키워드는 `함수` 로 호출할 수도 있고, `식별자` 로 참조할 수도 있습니다.
+
+각 특징은 다음과 같습니다.
+
+<br />
+
+* `super` 를 `함수` 로 호출
+    * `부모 클래스` 의 `constructor` 를 호출하게 됩니다.
+    * `자식 클래스` 의 `constructor` 를 정의하였다면, 반드시 `constructor` 메서드의 최상단에 `super(매개변수)` 를 호출하여야 합니다.
+    * `constructor` 가 아닌 곳에서는 호출할 수 없습니다.
+
+* `super` 를 `식별자` 로 호출
+    * `부모 클래스` 에 정의된 `인스턴스` 프로퍼티와 메서드에 접근할 수 있습니다.
+    * `ES6` 에서 추가된 `메서드 축약 표현` 으로 정의된 `메서드` 에서만 `super` 키워드를 사용할 수 있습니다.
+        * `메서드 축약 표현` 으로 정의한 `메서드` 에는 내부슬록 `[[HomeObject]]` 가 있으며, `[[HomeObject]]` 를 통해서 `메서드 자신` 이 바인딩 되어있는 `객체` 를 참조하게 됩니다.
+    * `class` 로 생성한 `인스턴스` 뿐만 아니라, `객체 리터럴` 의 내부에 정의한 `메서드 축약 표현` 메서드 내부에서도 `super` 키워드를 사용할 수 있습니다.
+    * `자식 클래스` 의 메서드 내부에서 `부모 클래스` 에 정의한 `프로퍼티` 와 `메서드` 에 접근할 수 있습니다.
+
+<br />
+
+아래의 코드는 `super.메서드()` 를 호출한 예시 입니다.
+
+<br />
+
+```javascript
+class Base {
+  name;
+  
+  constructor(name) {
+    this.name = name;
+  }
+
+  sayGreeting() {
+    const value = Object
+      .entries(this)
+      .map(([key, curValue]) => `${key}: ${curValue}`)
+      .join(' | ');
+
+    console.log(`Called Base Instance Method: - ${value}`);
+  }
+}
+
+class Child extends Base {
+  age;
+
+  constructor(name, age) {
+    super(name);
+    
+    this.age = age;
+  }
+
+  sayHi() {
+    // super.sayGreeting 으로 접근하게 되면, 
+    // 현재 클래스에서 `Overriding` 한 메서드가 아닌, 
+    // 부모 클래스에 정의한 프로퍼티 또는 메서드를 참조하게 됩니다.
+    super.sayGreeting();
+  }
+
+  // 이 메서드는 sayHi() 에서 호출하지 않습니다.
+  sayGreeting() {
+    console.log(`Child Instance's age - ${this.age}`);
+  }
+}
+
+const child = new Child('Chocobe', 36);
+child.sayHi();
+```
+
+<br />
+
+위 코드에서 `Child 인스턴스` 인 `child` 는 다음과 같은 구조가 됩니다.
+
+```javascript
+const child = {
+  // `name` 은 Base 클래스의 프로퍼티였지만, 상속받게 되면서 Child 인스턴스의 프로퍼티로 등록 되는 특징이 있습니다.
+  name: 'Chocobe',
+  age: 36,
+
+  // Child.prototype
+  [[Prototype]]: {
+    constructor: class Child,
+    sayGreeting: f sayGreeting(),
+    sayHi: f sayHi(),
+
+    // Base.prototype
+    [[Prototype]]: {
+      constructor: class Base,
+      sayGreeting: f sayGreeting(),
+      
+      // Object.prototype
+      [[Prototype]]: {
+        constructor: f Object(),
+        // ... 생략
+      }
+    }
+  }
+}
+```
+
+<br />
+
+## 8-6. 상속 클래스의 인스턴스 생성 과정
+
+`extends` 를 사용하여 `상속받은 class 인스턴스` 를 생성하는 과정은 조금 달라집니다.
+
+가장 큰 차이점은 `자식 클래스` 의 `constructor` 에서 `인스턴스` 를 생성하지 않고, `super()` 를 통해 `부모 클래스` 에 인스턴스 생성을 `위임` 하게 되는 동작 입니다.
+
+<br />
+
+1. 서브클래스 `constructor()` 의 첫째줄에 있는 `super()` 호출
+    * `서브클래스` 는 인스턴스를 생성하지 않고, `부모 클래스` 의 `constructor` 를 호출하게 됩니다.
+
+2. 수퍼클래스의 `인스턴스 생성` 과 `this 바인딩`
+    * `부모 클래스` 의 `constructor` 가 호출되고 `인스턴스` 를 생성 합니다.
+        * `부모 클래스` 가 생성한 인스턴스지만, 인스턴스의 `__proto__` 는 `자식 클래스` 의 `prototype` 이 바인딩 됩니다.
+            * `부모 클래스` 의 `constructor` 내부이지만, `new.target` 은 `자식 클래스` 를 가리키고 있기 때문입니다.
+    * 생성한 인스턴스를 `this` 에 바인딩 합니다.
+
+3. 수퍼클래스 `인스턴스 초기화`
+    * `부모 클래스` 의 `constructor` 에 정의한 `초기화` 로직을 사용하여, 인스턴스를 `초기화` 합니다.
+    * `부모 클래스` 의 `constructor` 의 인스턴스 초기화 동작이 모두 완료되면, 암묵적으로 `인스턴스` 를 `반환` 합니다.
+
+4. `서브클래스 constructor 로의 복귀` 와 `this 바인딩`
+    * `super()` 가 종료되면 `자식 클래스` 의 `constructor` 로 복귀하게 됩니다.
+    * `super()` 가 반환한 `인스턴스` 를 `this 바인딩` 합니다.
+
+5. 서브클래스의 인스턴스 초기화
+    * `자식 클래스` 의 `cocnstructor` 에 정의한 `초기화` 동작을 실행 합니다.
+
+6. 인스턴스 반환
+    * `자식 클래스` 의 `constructor` 도 실행 완료되면, 암묵적으로 인스턴스를 `반환` 합니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 8-7. 표준 빌트인 생성자 함수 확장
+
+`class` 는 `extends` 를 사용하여 `상속` 을 받을 수 있으며, 이는 `생성자 함수` 도 상속 받을 수 있었습니다.
+
+자바스크립트의 `표준 빌트인 생성자 함수` 도 `[[Construct]]` 를 가지는 `생성자 함수` 입니다.
+
+따라서 `표준 빌트인 생성자 함수` 를 상속받는 `class` 를 정의하여 `표준 빌트인 생성자 함수` 를 확장할 수 있습니다.
+
+<br />
+
+아래의 코드는 자바스크립트가 제공하는 `표준 빌트인 생성자 함수` 인 `Array` 를 확장하는 예시 입니다.
+
+<br />
+
+```javascript
+class MyArray extends Array {
+  uniq() {
+    return this.filter((value, index, self) => self.indexOf(value) === index);
+  }
+
+  average() {
+    const total = this.reduce((total, value) => {
+      return total + value;
+    }, 0);
+
+    return total / this.length;
+  }
+}
+
+const myArray = new MyArray(1, 1, 3, 5, 5);
+
+// MyArray(3): [1, 3, 5]
+console.log(myArray.uniq());
+
+// 3
+console.log(myArray.average());
+```

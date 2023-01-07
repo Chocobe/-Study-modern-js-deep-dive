@@ -18,4 +18,5 @@ const chocobe = new Person('Chocobe', 36);
 // ReferenceError
 // chocobe.sayHello();
 
+// 정적 메서드 호출
 Person.sayHello();
