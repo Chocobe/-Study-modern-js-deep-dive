@@ -14,7 +14,7 @@ const Person = class MyPerson {
   }
 };
 
-// class 는 [[Caller]] 로 호출할 경우, 에러를 발생 시킵니다.
+// class 는 [[Call]] 로 호출할 경우, 에러를 발생 시킵니다.
 // Person();
 
 // 기명 클래스 표현식에 사용한 이름은, 클래스 외부에서 사용할 수 없습니다.

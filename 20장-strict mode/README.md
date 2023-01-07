@@ -218,7 +218,7 @@ myFunction();
 
 ## 6-1. 일반 함수의 this
 
-`strict mode` 에서 함수를 `일반 함수 ([[Caller]])` 로 호출하게 되면, 해당 함수 스코프의 `this` 는 `undefined` 가 바인딩 됩니다.
+`strict mode` 에서 함수를 `일반 함수 ([[Call]])` 로 호출하게 되면, 해당 함수 스코프의 `this` 는 `undefined` 가 바인딩 됩니다.
 
 에러는 발생하지 않지만, `this` 를 통한 프로퍼티 접근은 `ReferenceError` 가 발생 합니다.
 
