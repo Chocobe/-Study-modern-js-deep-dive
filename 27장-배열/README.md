@@ -1036,3 +1036,148 @@ const result3 = arr.flat(Infinity);
  */
 console.log(result3);
 ```
+
+
+
+# 9. 배열 고차 함수
+
+자바스크립트의 함수는 값으로 평가되는 `일급 객체` 입니다.
+
+함수를 `인자` 로 받거나, `반환` 하는 함수를 `고차 함수 (HOC: Higher Order Function)` 이라고 합니다.
+
+<br />
+
+`고차 함수` 는 `함수형 프로그래밍 페러다임` 에서 사용하는 패턴이며, `고차 함수` 를 사용하는 목적은 다음과 같습니다.
+
+* `불변성 (Immutable)` 을 지향 합니다.
+    * 함수 외부의 데이터를 변경하는 `부수효과 (Side Effect)` 를 피할 수 있습니다.
+* `순수 함수 (Pure Function)` 과 `보조 함수 (Helper Function)` 의 조합으로 구현하게 됩니다.
+* `조건문` 과 `반복문` 을 최대한 제거하여, `로직의 흐름` 을 파악하기 쉽게 만들 수 있습니다.
+
+<br />
+
+자바스크립트의 배열 `빌트인 객체` 인 `Array.prototype` 에는 다양한 `고차 함수` 메서드를 제공하고 있습니다.
+
+
+
+<br /><hr /><br />
+
+
+
+# 9-1. Array.prototype.sort
+
+`Array.prototype.sort` 는 배열의 모든 요소를 `정렬` 시키는 메서드 입니다.
+
+`Array.prototype.sort` 는 원본 배열을 직접 수정하는 `Mutator Method` 입니다.
+
+<br />
+
+`sort()` 메서드에 `인수` 를 넘겨주지 않으면 `기본 정렬 방식` 으로 동작하며, 이는 `오름차순 정렬` 입니다.
+
+정렬을 위해 각 요소를 비교하는 값은 `유니코드` 를 사용합니다.
+
+그래서 `[2, 10, 1]` 을 `기본 정렬 방식` 으로 실행하면 다음과 같이 의도했던 오름차순이 아닌, 잘못된 정렬이 되어 버립니다.
+
+<br />
+
+```javascript
+// 1. Array.prototype.sort() 의 기본 정렬 방식의 문제점
+const arr1 = [2, 10, 1];
+arr1.sort();
+
+// [1, 10, 2];
+console.log(arr1);
+```
+
+<br />
+
+때문에 `sort()` 메서드를 사용할 때는 값을 비교하는 `보조 함수 (Helper Function)` 을 `인수` 로 넘겨주어야 합니다.
+
+`인수` 로 넘겨주는 `보조 함수` 는 2개의 인수를 받으며, 반환값에 따라 정렬을 실행 합니다.
+
+반환값과 정렬 동작은 다음과 같습니다.
+
+* `1` 반환 시, `첫번째 인수` 와 `두번째 인수` 의 순서를 바꿉니다.
+* `0` 또는 `-1` 일 경우, 그대로 유지 합니다.
+
+<br />
+
+```javascript
+const arr2 = [2, 10, 1];
+
+// 오름차순 정렬
+arr2.sort((a, b) => a - b);
+// [1, 2, 10]
+console.log(arr2);
+
+// 내림차순 정렬
+arr2.sort((a, b) => b - a);
+// [10, 2, 1]
+console.log(arr2);
+```
+
+<br />
+
+배열의 요소가 `Number` 타입이 아닌, `객체` 라면 다음과 같이 특정 프로퍼티를 비교하여 정렬할 수 있습니다.
+
+<br />
+
+```javascript
+const arr3 = [
+  { id: 10, name: 'Kim' },
+  { id: 2, name: 'LucidMoon' },
+  { id: 1, name: 'Chocobe' },
+];
+
+// 오름차순 정렬
+arr3.sort((a, b) => a.id - b.id);
+/**
+ * [
+ *  { id: 1, name: 'Chocobe' },
+ *  { id: 2, name: 'LucidMoon' },
+ *  { id: 10, name: 'Kim' }
+ * ]
+ **/
+console.log(arr3);
+
+// 내림차순 정렬
+arr3.sort((a, b) => b.id - a.id);
+/**
+ * [
+ *  { id: 10, name: 'Kim' }
+ *  { id: 2, name: 'LucidMoon' },
+ *  { id: 1, name: 'Chocobe' },
+ * ]
+ **/
+console.log(arr3);
+```
+
+
+
+<br /><hr /><br />
+
+
+
+## 9-2. Array.prototype.forEach
+
+`for 문` 을 사용하여 배열을 순회할 경우, 반복을 위한 변수를 선언하게 되지만, `Array.prototype.forEach` 를 사용하면, 변수 선언 없이 배열 전체를 순회할 수 있습니다.
+
+`Array.prototype.forEach` 는 원본 배열에 영향을 주지 않는 `Access Method` 입니다.
+
+<br />
+
+`forEach()` 도 내부에는 `for 문` 을 사용하지만 이를 `내부에 은닉` 함으로써, `forEach()` 를 사용하는 입장에서는 반복할 동작만을 작성하게 됩니다.
+
+이로인해 `변수의 사용` 을 `억제` 하게 되며, 가독성을 높일 수 있습니다.
+
+<br />
+
+`forEach()` 는 배열 순회 도중에 멈출 수 없습니다.
+
+`for()` 는 `break` 또는 `continue` 를 사용하여 반복을 제어할 수 있지만, `forEach()` 에는 적용되지 않는 특징이 있습니다.
+
+그래서 성능적으로는 `forEach()` 가 비교적 좋지 않지만, 배열 요소가 대단히 많지 않거나 시간이 오래 걸리지 않는다면, `forEach()` 를 사용하여 가독성을 높이는 것을 권장합니다.
+
+
+
+<br /><hr /><br />
