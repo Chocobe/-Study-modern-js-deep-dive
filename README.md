@@ -82,3 +82,5 @@
 * [25장. 클래스](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/25%EC%9E%A5-%ED%81%B4%EB%9E%98%EC%8A%A4)
 
 * [26장. ES6 함수의 추가 기능](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/26%EC%9E%A5-ES6%20%ED%95%A8%EC%88%98%EC%9D%98%20%EC%B6%94%EA%B0%80%20%EA%B8%B0%EB%8A%A5)
+
+* [27장. 배열](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/27%EC%9E%A5-%EB%B0%B0%EC%97%B4)

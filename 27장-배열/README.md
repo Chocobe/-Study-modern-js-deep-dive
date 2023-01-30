@@ -1,5 +1,60 @@
 # 27장. 배열
 
+배열은 다양한 메서드를 제공하고 있습니다.
+
+배열 메서드의 주요 특징을 먼저 살펴보면 다음과 같습니다.
+
+* Array static 메서드
+
+|메서드명|기능|
+|:---:|:---:|
+|`Array.isArray(인자)`|인자가 배열인지 검사 / `유사배열` 도 `false` 반환|
+
+<br />
+
+* Array 메서드
+
+|메서드명|동작 방식|기능|
+|:---:|:---:|:---:|
+|`indexOf(인자)`|Access Method|인자의 인덱스 값 반환|
+|`push(인자)`|`Mutator` Method|마지막 요소로 인자 추가|
+|`pop()`|`Mutator` Method|마지막 요소 반환 및 삭제|
+|`unshift(인자)`|`Mutator` Method|선두에 인자 추가|
+|`shift()`|`Mutator` Method|선두 요소 반환 및 삭제|
+|`concat(인자)`|Access Method|인자를 마지막 요소로 추가한 새로운 배열 반환|
+|`splice(인덱스, 삭제_개수, ...추가할_요소)`|`Mutator` Method|인자로 지정한 인덱스에서 요소를 삭제하고, 그 자리에 새로운 요소 추가|
+|`slice(시작_인덱스, 끝_인덱스)`|Access Method|인자로 지정한 요소들로 구성한 새로운 배열 반환|
+|`join(구분자)`|Access Method|모든 요소를 구분자로 연결한 하나의 문자열을 반환|
+|`reverse()`|`Mutator` Method|전체 요소의 순서를 거꾸로 뒤집기|
+|`fill(채우기_값, 시작_인덱스, 끝_인덱스)`|`Mutator` Method|지정한 범위를 `채우기_값` 으로 모두 채우기|
+|`includes(인자)`|Access Method|인자가 배열에 속하는지 검사|
+|`flat(재귀_횟수)`|Access Method|중첩 배열을 평탄화한 새로운 배열 반환|
+
+<br />
+
+* Array HOF 메서드
+
+|메서드명|동작 방식|기능|
+|:---:|:---:|:---:|
+|`sort(cb)`|`Mutator` Method|`cb` 이 `양수` 반환 시 순서를 바꾸는 정렬 기능|
+|`forEach(cb)`|Access Method|`cb` 을 사용하여 모든 요소 순회|
+|`map(cb)`|Access Method|`cb` 으로 모든 요소를 변환하여 새로운 배열 반환|
+|`filter(cb)`|Access Method|`cb` 의 반환값이 `true` 인 요소로 구성된 새로운 배열 반환|
+|`reduce(cb, 초기값)`|Access Method|`cb` 의 반환값을 누적시킨 `하나의 값` 반환|
+|`some(cb)`|Access Method|`cb` 의 반환값이 하나라도 `true` 면, `true` 반환|
+|`every(cb)`|Access Method|`cb` 의 반환값이 하나라도 `false` 면, `false` 반환|
+|`find(cb)`|Access Method|`cb` 의 반환값이 `true` 인 `첫번째 요소` 반환|
+|`findIndex(cb)`|Access Method|`cb` 의 반환값이 `true` 인 `첫번째 요소` 의 `index` 반환|
+|`flatMap(cb)`|Access Method|`cb` 으로 `map` 동작을 한 결과에 `flat` 이 적용된 새로운 배열 반환|
+
+
+
+<br /><hr /><br />
+
+
+
+# 1. 배열이란?
+
 `배열` 은 여러개의 값을 `순차적` 으로 나열한 자료구조 입니다.
 
 `배열` 에 속하게 되는 값을 `요소 (Element)` 라고 합니다.
@@ -1181,3 +1236,109 @@ console.log(arr3);
 
 
 <br /><hr /><br />
+
+
+
+## 9-3. Array.prototype.map
+
+`Array.prototype.forEach` 처럼 배열의 모든 요소를 순회 합니다.
+
+차이점은 `Array.prototype.map` 에 `인수` 로 넘겨주는 `callback` 함수의 `반환값` 으로 구성된 새로운 배열을 반환 합니다.
+
+`Array.prototype.map` 은 원본 배열에 영향을 주지않는 `Access Method` 입니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 9-4. Array.prototype.filter
+
+배열의 모든 요소를 순회하며, `인수` 로 넘겨준 `callback` 함수가 `true` 를 반환하는 요소만으로 구성된 새로운 배열을 반환합니다.
+
+`Array.prototype.filter` 는 원본 배열에 영향을 주지않는 `Access Method` 입니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 9-5. Array.prototype.reducer
+
+배열의 모든 요소를 순회하며, `인수` 로 넘겨준 `callback` 함수의 반환값을 누적하여 `하나의 결과값` 으로 반환 합니다.
+
+`Array.prototype.reducer` 는 원본 배열에 영향을 주지않는 `Access Method` 입니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 9-6. Array.prototype.some
+
+배열의 모든 요소를 순회하며, `인수` 로 넘겨준 `callback` 함수의 반환값이 하나라도 `truthy` 일 경우, `true` 를 반환 합니다.
+
+`Array.prototype.some` 은 원본 배열에 영향을 주지않는 `Access Method` 입니다.
+
+<br />
+
+주의할 점은 `빈 배열` 에 `Array.prototype.some` 메서드를 호출하면, 항상 `false` 를 반환 합니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 9-7. Array.prototype.every
+
+배열의 모든 요소를 순회하며, `인수` 로 넘겨준 `callback` 함수의 반환값이 모두 `truthy` 일 경우, `true` 를 반환 합니다.
+
+`Array.prototype.every` 는 원본 배열에 영향을 주지않는 `Access Method` 입니다.
+
+<br />
+
+주의할 점은 `빈 배열` 에 `Array.prototype.every` 메서드를 호출하면, 항상 `true` 를 반환 합니다.
+
+
+
+<br /><br /><br />
+
+
+
+## 9-8. Array.prototype.find
+
+배열의 모든 요소를 순회하며, `인수` 로 넘겨준 `callback` 함수의 반환값이 `true` 인 `첫번째 요소` 를 반환 합니다.
+
+만약 `callback` 함수의 반환값이 `true` 인 요소가 없다면, `undefined` 를 반환 합니다.
+
+`Array.prototype.find` 는 원본 배열에 영향을 주지않는 `Access Method` 입니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 9-9. Array.prototype.findIndex
+
+배열의 모든 요소를 순회하며, `인수` 로 넘겨준 `callback` 함수의 반환값이 `true` 인 `첫번째 인수` 의 `index` 를 반환 합니다.
+
+만약 `callback` 함수의 반환값이 `true` 인 요소가 없다면, `-1` 을 반환 합니다.
+
+`Array.prototype.findIndex` 는 원본 배열에 영향을 주지않는 `Access Method` 입니다.
+
+
+
+<br /><hr /><br />
+
+
+
+## 9-10. Array.prototype.flatMap
+
+`Array.prototype.map` 과 `Array.prototype.flat` 을 순차적으로 적용한 결과를 반환 합니다.
+
+`Arrapy.prototype.flat` 과는 다르게 `평탄화 깊이` 를 지정할 수는 없기 때문에, `1차 평탄화` 만 가능 합니다.

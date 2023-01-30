@@ -9,13 +9,14 @@ console.log(' ');
 
 // 2. Array 생성자 함수
 // 2-1. 인수가 1개 이고 Number 타입일 경우 => 희소 배열 생성
-const sparseArr = new Array(3);
+// => new Array() 에 1개의 number 인수만 넘겨줄 경우, `인수`를 배열의 length 로 생성학게 되며, 희소배열로 생성하게 됩니다.
+const arr1 = new Array(3);
 
-// sparseArr.length: 3
-console.log('sparseArr.length: ', sparseArr.length);
+// arr1.length: 3
+console.log('arr1.length: ', arr1.length);
 
 // [ <3 empty items> ]
-console.log(sparseArr);
+console.log(arr1);
 
 
 
@@ -52,30 +53,30 @@ console.log(' ');
 
 // 4. Array.from
 // 4-1. 유사 배열 객체 (Array-Like Object) 또는 이터러블 객체 (Iterable Object)
-const arr1 = Array.from({
+const arr2 = Array.from({
   length: 3,
   0: 'A',
   1: 'B',
   2: 'C',
 });
 
-// arr1.length: 3
-console.log('arr1.length: ', arr1.length);
+// arr2.length: 3
+console.log('arr2.length: ', arr2.length);
 
 // ['A', 'B', 'C']
-console.log(arr1);
+console.log(arr2);
 
 
 
 
 // 4-2. 두번째 인수로 callback 사용
-const arr2 = Array.from(
+const arr3 = Array.from(
   { length: 3 },
   (_, i) => i * 100
 );
 
-// arr2.length: 3
-console.log('arr2.length: ', arr2.length);
+// arr3.length: 3
+console.log('arr3.length: ', arr3.length);
 
 // [0, 100, 200]
-console.log(arr2);
+console.log(arr3);
