@@ -92,3 +92,5 @@
 * [27장. 배열](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/27%EC%9E%A5-%EB%B0%B0%EC%97%B4)
 
 * [28장. Number](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/28%EC%9E%A5-Number)
+
+* [29장. Math](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/29%EC%9E%A5-Math)
