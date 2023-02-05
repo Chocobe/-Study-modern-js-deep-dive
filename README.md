@@ -96,3 +96,5 @@
 * [29장. Math](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/29%EC%9E%A5-Math)
 
 * [30장. Date](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/30%EC%9E%A5-Date)
+
+* [31장. RegExp](https://github.com/Chocobe/-Study-modern-js-deep-dive/tree/master/31%EC%9E%A5-RegExp)
